@@ -258,33 +258,6 @@ rej:
 }
 
 /*************************************************
-* Name:        PQCLEAN_DILITHIUM5_AVX2_crypto_sign
-*
-* Description: Compute signed message.
-*
-* Arguments:   - uint8_t *sm: pointer to output signed message (allocated
-*                             array with PQCLEAN_DILITHIUM5_AVX2_CRYPTO_BYTES + mlen bytes),
-*                             can be equal to m
-*              - size_t *smlen: pointer to output length of signed
-*                               message
-*              - const uint8_t *m: pointer to message to be signed
-*              - size_t mlen: length of message
-*              - const uint8_t *sk: pointer to bit-packed secret key
-*
-* Returns 0 (success)
-**************************************************/
-int PQCLEAN_DILITHIUM5_AVX2_crypto_sign(uint8_t *sm, size_t *smlen, const uint8_t *m, size_t mlen, const uint8_t *sk) {
-    size_t i;
-
-    for (i = 0; i < mlen; ++i) {
-        sm[PQCLEAN_DILITHIUM5_AVX2_CRYPTO_BYTES + mlen - 1 - i] = m[mlen - 1 - i];
-    }
-    PQCLEAN_DILITHIUM5_AVX2_crypto_sign_signature(sm, smlen, sm + PQCLEAN_DILITHIUM5_AVX2_CRYPTO_BYTES, mlen, sk);
-    *smlen += mlen;
-    return 0;
-}
-
-/*************************************************
 * Name:        PQCLEAN_DILITHIUM5_AVX2_crypto_sign_verify
 *
 * Description: Verifies signature.
@@ -390,46 +363,4 @@ int PQCLEAN_DILITHIUM5_AVX2_crypto_sign_verify(const uint8_t *sig, size_t siglen
     }
 
     return 0;
-}
-
-/*************************************************
-* Name:        PQCLEAN_DILITHIUM5_AVX2_crypto_sign_open
-*
-* Description: Verify signed message.
-*
-* Arguments:   - uint8_t *m: pointer to output message (allocated
-*                            array with smlen bytes), can be equal to sm
-*              - size_t *mlen: pointer to output length of message
-*              - const uint8_t *sm: pointer to signed message
-*              - size_t smlen: length of signed message
-*              - const uint8_t *pk: pointer to bit-packed public key
-*
-* Returns 0 if signed message could be verified correctly and -1 otherwise
-**************************************************/
-int PQCLEAN_DILITHIUM5_AVX2_crypto_sign_open(uint8_t *m, size_t *mlen, const uint8_t *sm, size_t smlen, const uint8_t *pk) {
-    size_t i;
-
-    if (smlen < PQCLEAN_DILITHIUM5_AVX2_CRYPTO_BYTES) {
-        goto badsig;
-    }
-
-    *mlen = smlen - PQCLEAN_DILITHIUM5_AVX2_CRYPTO_BYTES;
-    if (PQCLEAN_DILITHIUM5_AVX2_crypto_sign_verify(sm, PQCLEAN_DILITHIUM5_AVX2_CRYPTO_BYTES, sm + PQCLEAN_DILITHIUM5_AVX2_CRYPTO_BYTES, *mlen, pk)) {
-        goto badsig;
-    } else {
-        /* All good, copy msg, return 0 */
-        for (i = 0; i < *mlen; ++i) {
-            m[i] = sm[PQCLEAN_DILITHIUM5_AVX2_CRYPTO_BYTES + i];
-        }
-        return 0;
-    }
-
-badsig:
-    /* Signature verification failed */
-    *mlen = -1;
-    for (i = 0; i < smlen; ++i) {
-        m[i] = 0;
-    }
-
-    return -1;
 }
