@@ -2,7 +2,19 @@
 name = "dilithium-raw"
 version = "0.1.0"
 edition = "2021"
+build = "build.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[features]
+default = ["dilithium2", "dilithium3", "dilithium5"]
+dilithium2 = []
+dilithium3 = []
+dilithium5 = []
+
+
 [dependencies]
+
+[build-dependencies]
+cc = "1.0"
+glob = "0.3"
