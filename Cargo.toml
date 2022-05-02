@@ -7,10 +7,13 @@ build = "build.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-default = ["dilithium2", "dilithium3", "dilithium5"]
+default = ["dilithium2", "dilithium3", "dilithium5", "avx2", "aarch64", "dynamic_cpu_features"]
 dilithium2 = []
 dilithium3 = []
 dilithium5 = []
+avx2 = []
+aarch64 = []
+dynamic_cpu_features = []
 
 
 [dependencies]

@@ -1,14 +1,11 @@
 pub const PQCLEAN_DILITHIUM3_AARCH64_CRYPTO_PUBLICKEYBYTES: usize = 1952;
 pub const PQCLEAN_DILITHIUM3_AARCH64_CRYPTO_SECRETKEYBYTES: usize = 4000;
 pub const PQCLEAN_DILITHIUM3_AARCH64_CRYPTO_BYTES: usize = 3293;
-use cty::{size_t, c_int};
+use cty::{c_int, size_t};
 
 #[link(name = "dilithium3_aarch64")]
 extern "C" {
-    pub fn PQCLEAN_DILITHIUM3_AARCH64_crypto_sign_keypair(
-        pk: *mut u8,
-        sk: *mut u8,
-    ) -> c_int;
+    pub fn PQCLEAN_DILITHIUM3_AARCH64_crypto_sign_keypair(pk: *mut u8, sk: *mut u8) -> c_int;
 
     pub fn PQCLEAN_DILITHIUM3_AARCH64_crypto_sign_signature(
         sig: *mut u8,
@@ -38,19 +35,34 @@ mod tests {
         let mut seckey = [0u8; PQCLEAN_DILITHIUM3_AARCH64_CRYPTO_SECRETKEYBYTES];
         let mut pubkey = [0u8; PQCLEAN_DILITHIUM3_AARCH64_CRYPTO_PUBLICKEYBYTES];
         let res = unsafe {
-            PQCLEAN_DILITHIUM3_AARCH64_crypto_sign_keypair(&mut pubkey as *mut u8, &mut seckey as *mut u8)
+            PQCLEAN_DILITHIUM3_AARCH64_crypto_sign_keypair(
+                &mut pubkey as *mut u8,
+                &mut seckey as *mut u8,
+            )
         };
         assert_eq!(res, 0);
 
         let mut sig = [9u8; PQCLEAN_DILITHIUM3_AARCH64_CRYPTO_BYTES];
         let mut len: usize = 0;
         let res = unsafe {
-            PQCLEAN_DILITHIUM3_AARCH64_crypto_sign_signature(&mut sig as *mut u8, &mut len as *mut usize, msg as *const u8, msg.len(), &seckey as *const u8)
+            PQCLEAN_DILITHIUM3_AARCH64_crypto_sign_signature(
+                &mut sig as *mut u8,
+                &mut len as *mut usize,
+                msg as *const u8,
+                msg.len(),
+                &seckey as *const u8,
+            )
         };
         assert_eq!(res, 0);
 
         let res = unsafe {
-            PQCLEAN_DILITHIUM3_AARCH64_crypto_sign_verify(&sig as *const u8, len, msg as *const u8, msg.len(), &pubkey as *const u8)
+            PQCLEAN_DILITHIUM3_AARCH64_crypto_sign_verify(
+                &sig as *const u8,
+                len,
+                msg as *const u8,
+                msg.len(),
+                &pubkey as *const u8,
+            )
         };
         assert_eq!(res, 0, "Invalid signature crated!");
     }
