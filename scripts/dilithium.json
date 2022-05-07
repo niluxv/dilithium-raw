@@ -1,0 +1,25 @@
+{
+    "parameter_sets" : [
+        {
+            "security_level" : 2,
+            "publickey_bytes" : 1312,
+            "secretkey_bytes" : 2528,
+            "signature_bytes" : 2420,
+            "implementations" : ["clean", "avx2", "aarch64"]
+        },
+        {
+            "security_level" : 3,
+            "publickey_bytes" : 1952,
+            "secretkey_bytes" : 4000,
+            "signature_bytes" : 3293,
+            "implementations" : ["clean", "avx2", "aarch64"]
+        },
+        {
+            "security_level" : 5,
+            "publickey_bytes" : 2592,
+            "secretkey_bytes" : 4864,
+            "signature_bytes" : 4595,
+            "implementations" : ["clean", "avx2", "aarch64"]
+        }
+    ]
+}
