@@ -66,6 +66,12 @@ fn main() {
         .split(",")
         .map(|s| s.to_string())
         .collect();
+    let target_pointer_width = env::var("CARGO_CFG_TARGET_POINTER_WIDTH").unwrap();
+    let usize_width_bytes = match target_pointer_width.as_ref() {
+        "64" => "8",
+        "32" => "4",
+        _ => panic!("unsupported pointer width"),
+    };
 
     let msvc = target_env == "msvc";
     // asm .S files use system V ABI calling convention and don't support MSVC, so
@@ -77,6 +83,13 @@ fn main() {
     // neon is supported on all aarch64 CPUs so no need for dynamic cpu feature
     // detection
     let enable_aarch64 = target_arch == "aarch64" && feat_aarch64 && !msvc;
+
+    // sanity check the C compiler
+    cc::Build::new()
+        .file("extern/sanity_check.c")
+        .define("RUST_USIZE_WIDTH_BYTES", Some(usize_width_bytes))
+        .try_compile("sanity_check_build")
+        .expect("sanity check build failed");
 
     let files_glob = glob::glob("extern/common/*.c")
         .expect("glob error")
