@@ -10,7 +10,8 @@
 
 #define PQCLEAN_DILITHIUM3_CLEAN_CRYPTO_ALGNAME "Dilithium3"
 
-int PQCLEAN_DILITHIUM3_CLEAN_crypto_sign_keypair(uint8_t *pk, uint8_t *sk);
+int PQCLEAN_DILITHIUM3_CLEAN_crypto_sign_keypair(
+    uint8_t *pk, uint8_t *sk, uint8_t random[128]);
 
 int PQCLEAN_DILITHIUM3_CLEAN_crypto_sign_signature(
     uint8_t *sig, size_t *siglen,

@@ -4,7 +4,6 @@
 #include "params.h"
 #include "poly.h"
 #include "polyvec.h"
-#include "randombytes.h"
 #include "sign.h"
 #include "symmetric.h"
 #include <stdint.h>
@@ -40,22 +39,22 @@ static inline void polyvec_matrix_expand_row(polyvecl **row, polyvecl buf[2], co
 *                             array of PQCLEAN_DILITHIUM2_AVX2_CRYPTO_PUBLICKEYBYTES bytes)
 *              - uint8_t *sk: pointer to output private key (allocated
 *                             array of PQCLEAN_DILITHIUM2_AVX2_CRYPTO_SECRETKEYBYTES bytes)
+*              - uint8_t random[2 * SEEDBYTES + CRHBYTES]: pointer to array filled with random
+*                             bytes; needs to live until the function returns
 *
 * Returns 0 (success)
 **************************************************/
-int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_keypair(uint8_t *pk, uint8_t *sk) {
+int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_keypair(uint8_t *pk,
+        uint8_t *sk,
+        uint8_t random[2 * SEEDBYTES + CRHBYTES]) {
     unsigned int i;
-    uint8_t seedbuf[2 * SEEDBYTES + CRHBYTES];
     const uint8_t *rho, *rhoprime, *key;
     polyvecl rowbuf[2];
     polyvecl s1, *row = rowbuf;
     polyveck s2;
     poly t1, t0;
 
-    /* Get randomness for rho, rhoprime and key */
-    randombytes(seedbuf, SEEDBYTES);
-    shake256(seedbuf, 2 * SEEDBYTES + CRHBYTES, seedbuf, SEEDBYTES);
-    rho = seedbuf;
+    rho = random;
     rhoprime = rho + SEEDBYTES;
     key = rhoprime + CRHBYTES;
 

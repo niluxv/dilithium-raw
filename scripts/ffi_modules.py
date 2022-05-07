@@ -30,7 +30,15 @@ use cty::{{c_int, size_t}};
 
 #[link(name = "dilithium{level}_{impl}")]
 extern "C" {{
-    pub fn PQCLEAN_DILITHIUM{level}_{IMPL}_crypto_sign_keypair(pk: *mut u8, sk: *mut u8) -> c_int;
+    /// Generate a new keypair, writing the public key to `pk` and the secret
+    /// key to `sk`. Requires a buffer `random` to be filled with
+    /// cryptographically secure random bytes, living at least until the
+    /// function returns.
+    pub fn PQCLEAN_DILITHIUM{level}_{IMPL}_crypto_sign_keypair(
+        pk: *mut u8,
+        sk: *mut u8,
+        random: *mut [u8; 128],
+    ) -> c_int;
 
     pub fn PQCLEAN_DILITHIUM{level}_{IMPL}_crypto_sign_signature(
         sig: *mut u8,
@@ -59,10 +67,13 @@ mod tests {{
 
         let mut seckey = [0u8; PQCLEAN_DILITHIUM{level}_{IMPL}_CRYPTO_SECRETKEYBYTES];
         let mut pubkey = [0u8; PQCLEAN_DILITHIUM{level}_{IMPL}_CRYPTO_PUBLICKEYBYTES];
+        // not secure random, but deterministic and good enough for the test
+        let mut random = [37u8; 128];
         let res = unsafe {{
             PQCLEAN_DILITHIUM{level}_{IMPL}_crypto_sign_keypair(
                 &mut pubkey as *mut u8,
                 &mut seckey as *mut u8,
+                &mut random as *mut [u8; 128],
             )
         }};
         assert_eq!(res, 0);

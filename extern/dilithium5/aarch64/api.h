@@ -11,7 +11,8 @@
 #define PQCLEAN_DILITHIUM5_AARCH64_CRYPTO_ALGNAME "Dilithium5"
 
 
-int PQCLEAN_DILITHIUM5_AARCH64_crypto_sign_keypair(uint8_t *pk, uint8_t *sk);
+int PQCLEAN_DILITHIUM5_AARCH64_crypto_sign_keypair(
+    uint8_t *pk, uint8_t *sk, uint8_t random[128]);
 
 int PQCLEAN_DILITHIUM5_AARCH64_crypto_sign_signature(
     uint8_t *sig, size_t *siglen,
