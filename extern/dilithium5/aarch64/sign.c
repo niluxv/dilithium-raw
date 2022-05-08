@@ -21,7 +21,8 @@
 *
 * Returns 0 (success)
 **************************************************/
-int crypto_sign_keypair(uint8_t *pk,
+int DILITHIUM_NAMESPACE(crypto_sign_keypair)(
+        uint8_t *pk,
         uint8_t *sk,
         uint8_t random[2 * SEEDBYTES + CRHBYTES]) {
     uint8_t tr[SEEDBYTES];
@@ -76,11 +77,10 @@ int crypto_sign_keypair(uint8_t *pk,
 *
 * Returns 0 (success)
 **************************************************/
-int crypto_sign_signature(uint8_t *sig,
-                          size_t *siglen,
-                          const uint8_t *m,
-                          size_t mlen,
-                          const uint8_t *sk) {
+int DILITHIUM_NAMESPACE(crypto_sign_signature)(
+        uint8_t *sig, size_t *siglen,
+        const uint8_t *m, size_t mlen,
+        const uint8_t *sk) {
     unsigned int n;
     uint8_t seedbuf[3 * SEEDBYTES + 2 * CRHBYTES];
     uint8_t *rho, *tr, *key, *mu, *rhoprime;
@@ -190,11 +190,10 @@ rej:
 *
 * Returns 0 if signature could be verified correctly and -1 otherwise
 **************************************************/
-int crypto_sign_verify(const uint8_t *sig,
-                       size_t siglen,
-                       const uint8_t *m,
-                       size_t mlen,
-                       const uint8_t *pk) {
+int DILITHIUM_NAMESPACE(crypto_sign_verify)(
+        const uint8_t *sig, size_t siglen,
+        const uint8_t *m, size_t mlen,
+        const uint8_t *pk) {
     unsigned int i;
     uint8_t buf[K * POLYW1_PACKEDBYTES];
     uint8_t rho[SEEDBYTES];

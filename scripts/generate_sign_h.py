@@ -14,16 +14,13 @@ def main():
             IMPL = impl.upper()
 
             template = f"""\
-#ifndef PQCLEAN_DILITHIUM{level}_{IMPL}_API_H
-#define PQCLEAN_DILITHIUM{level}_{IMPL}_API_H
-
+#ifndef PQCLEAN_DILITHIUM{level}_{IMPL}_SIGN_H
+#define PQCLEAN_DILITHIUM{level}_{IMPL}_SIGN_H
+#include "params.h"
+#include "poly.h"
+#include "polyvec.h"
 #include <stddef.h>
 #include <stdint.h>
-
-#define PQCLEAN_DILITHIUM{level}_{IMPL}_CRYPTO_PUBLICKEYBYTES {publickey_bytes}
-#define PQCLEAN_DILITHIUM{level}_{IMPL}_CRYPTO_SECRETKEYBYTES {secretkey_bytes}
-#define PQCLEAN_DILITHIUM{level}_{IMPL}_CRYPTO_BYTES {signature_bytes}
-#define PQCLEAN_DILITHIUM{level}_{IMPL}_CRYPTO_ALGNAME "Dilithium{level}"
 
 int PQCLEAN_DILITHIUM{level}_{IMPL}_crypto_sign_keypair(
     uint8_t pk[PQCLEAN_DILITHIUM{level}_{IMPL}_CRYPTO_PUBLICKEYBYTES],
@@ -46,7 +43,7 @@ int PQCLEAN_DILITHIUM{level}_{IMPL}_crypto_sign_verify(
 #endif
 """
 
-            with open(f"extern/dilithium{level}/{impl}/api.h", 'w') as h_file:
+            with open(f"extern/dilithium{level}/{impl}/sign.h", 'w') as h_file:
                 h_file.write(template)
 
 if __name__ == "__main__":
