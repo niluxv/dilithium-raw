@@ -16,17 +16,20 @@ def main():
 * Description: Generates public and private key.
 *
 * Arguments:   - uint8_t *pk: pointer to output public key (allocated
-*                             array of PQCLEAN_DILITHIUM{level}_{IMPL}_CRYPTO_PUBLICKEYBYTES bytes)
+*                             array of CRYPTO_PUBLICKEYBYTES bytes)
 *              - uint8_t *sk: pointer to output private key (allocated
-*                             array of PQCLEAN_DILITHIUM{level}_{IMPL}_CRYPTO_SECRETKEYBYTES bytes)
-*              - uint8_t random[2 * SEEDBYTES + CRHBYTES]: pointer to array filled with random
-*                             bytes; needs to live until the function returns
+*                             array of CRYPTO_SECRETKEYBYTES bytes)
+*              - uint8_t random[2 * SEEDBYTES + CRHBYTES]:
+*                             pointer to array filled with random bytes;
+*                             needs to live until the function returns
 *
 * Returns 0 (success)
 **************************************************/
-int PQCLEAN_DILITHIUM{level}_{IMPL}_crypto_sign_keypair(uint8_t *pk,
+int DILITHIUM_NAMESPACE(crypto_sign_keypair)(
+        uint8_t *pk,
         uint8_t *sk,
-        uint8_t random[2 * SEEDBYTES + CRHBYTES]) {{"""
+        uint8_t random[2 * SEEDBYTES + CRHBYTES]
+) {{"""
 
             sign_signature_decl = f"""\
 /*************************************************
@@ -42,11 +45,13 @@ int PQCLEAN_DILITHIUM{level}_{IMPL}_crypto_sign_keypair(uint8_t *pk,
 *
 * Returns 0 (success)
 **************************************************/
-int PQCLEAN_DILITHIUM{level}_{IMPL}_crypto_sign_signature(uint8_t *sig,
+int DILITHIUM_NAMESPACE(crypto_sign_signature)(
+        uint8_t *sig,
         size_t *siglen,
         const uint8_t *m,
         size_t mlen,
-        const uint8_t *sk) {{"""
+        const uint8_t *sk
+) {{"""
 
             sign_verify_decl = f"""\
 /*************************************************
@@ -62,11 +67,13 @@ int PQCLEAN_DILITHIUM{level}_{IMPL}_crypto_sign_signature(uint8_t *sig,
 *
 * Returns 0 if signature could be verified correctly and -1 otherwise
 **************************************************/
-int PQCLEAN_DILITHIUM{level}_{IMPL}_crypto_sign_verify(const uint8_t *sig,
+int DILITHIUM_NAMESPACE(crypto_sign_verify)(
+        const uint8_t *sig,
         size_t siglen,
         const uint8_t *m,
         size_t mlen,
-        const uint8_t *pk) {{"""
+        const uint8_t *pk
+) {{"""
 
             if impl == "clean":
                 template = f"""\
@@ -648,24 +655,7 @@ rej:
 #include "symmetric.h"
 #include <stdint.h>
 
-/*************************************************
-* Name:        crypto_sign_keypair
-*
-* Description: Generates public and private key.
-*
-* Arguments:   - uint8_t *pk: pointer to output public key (allocated
-*                             array of CRYPTO_PUBLICKEYBYTES bytes)
-*              - uint8_t *sk: pointer to output private key (allocated
-*                             array of CRYPTO_SECRETKEYBYTES bytes)
-*              - uint8_t random[2 * SEEDBYTES + CRHBYTES]: pointer to array filled with random
-*                             bytes; needs to live until the function returns
-*
-* Returns 0 (success)
-**************************************************/
-int DILITHIUM_NAMESPACE(crypto_sign_keypair)(
-        uint8_t *pk,
-        uint8_t *sk,
-        uint8_t random[2 * SEEDBYTES + CRHBYTES]) {{
+{keypair_decl}
     uint8_t tr[SEEDBYTES];
     const uint8_t *rho, *rhoprime, *key;
     polyvecl mat[K];
@@ -705,23 +695,7 @@ int DILITHIUM_NAMESPACE(crypto_sign_keypair)(
     return 0;
 }}
 
-/*************************************************
-* Name:        crypto_sign_signature
-*
-* Description: Computes signature.
-*
-* Arguments:   - uint8_t *sig:   pointer to output signature (of length CRYPTO_BYTES)
-*              - size_t *siglen: pointer to output length of signature
-*              - uint8_t *m:     pointer to message to be signed
-*              - size_t mlen:    length of message
-*              - uint8_t *sk:    pointer to bit-packed secret key
-*
-* Returns 0 (success)
-**************************************************/
-int DILITHIUM_NAMESPACE(crypto_sign_signature)(
-        uint8_t *sig, size_t *siglen,
-        const uint8_t *m, size_t mlen,
-        const uint8_t *sk) {{
+{sign_signature_decl}
     unsigned int n;
     uint8_t seedbuf[3 * SEEDBYTES + 2 * CRHBYTES];
     uint8_t *rho, *tr, *key, *mu, *rhoprime;
@@ -818,23 +792,7 @@ rej:
     return 0;
 }}
 
-/*************************************************
-* Name:        crypto_sign_verify
-*
-* Description: Verifies signature.
-*
-* Arguments:   - uint8_t *m: pointer to input signature
-*              - size_t siglen: length of signature
-*              - const uint8_t *m: pointer to message
-*              - size_t mlen: length of message
-*              - const uint8_t *pk: pointer to bit-packed public key
-*
-* Returns 0 if signature could be verified correctly and -1 otherwise
-**************************************************/
-int DILITHIUM_NAMESPACE(crypto_sign_verify)(
-        const uint8_t *sig, size_t siglen,
-        const uint8_t *m, size_t mlen,
-        const uint8_t *pk) {{
+{sign_verify_decl}
     unsigned int i;
     uint8_t buf[K * POLYW1_PACKEDBYTES];
     uint8_t rho[SEEDBYTES];

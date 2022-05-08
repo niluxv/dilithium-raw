@@ -36,17 +36,20 @@ static inline void polyvec_matrix_expand_row(polyvecl **row, polyvecl buf[2], co
 * Description: Generates public and private key.
 *
 * Arguments:   - uint8_t *pk: pointer to output public key (allocated
-*                             array of PQCLEAN_DILITHIUM2_AVX2_CRYPTO_PUBLICKEYBYTES bytes)
+*                             array of CRYPTO_PUBLICKEYBYTES bytes)
 *              - uint8_t *sk: pointer to output private key (allocated
-*                             array of PQCLEAN_DILITHIUM2_AVX2_CRYPTO_SECRETKEYBYTES bytes)
-*              - uint8_t random[2 * SEEDBYTES + CRHBYTES]: pointer to array filled with random
-*                             bytes; needs to live until the function returns
+*                             array of CRYPTO_SECRETKEYBYTES bytes)
+*              - uint8_t random[2 * SEEDBYTES + CRHBYTES]:
+*                             pointer to array filled with random bytes;
+*                             needs to live until the function returns
 *
 * Returns 0 (success)
 **************************************************/
-int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_keypair(uint8_t *pk,
+int DILITHIUM_NAMESPACE(crypto_sign_keypair)(
+        uint8_t *pk,
         uint8_t *sk,
-        uint8_t random[2 * SEEDBYTES + CRHBYTES]) {
+        uint8_t random[2 * SEEDBYTES + CRHBYTES]
+) {
     unsigned int i;
     const uint8_t *rho, *rhoprime, *key;
     polyvecl rowbuf[2];
@@ -116,11 +119,13 @@ int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_keypair(uint8_t *pk,
 *
 * Returns 0 (success)
 **************************************************/
-int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_signature(uint8_t *sig,
+int DILITHIUM_NAMESPACE(crypto_sign_signature)(
+        uint8_t *sig,
         size_t *siglen,
         const uint8_t *m,
         size_t mlen,
-        const uint8_t *sk) {
+        const uint8_t *sk
+) {
     unsigned int i, n, pos;
     uint8_t seedbuf[3 * SEEDBYTES + 2 * CRHBYTES];
     uint8_t *rho, *tr, *key, *mu, *rhoprime;
@@ -253,11 +258,13 @@ rej:
 *
 * Returns 0 if signature could be verified correctly and -1 otherwise
 **************************************************/
-int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_verify(const uint8_t *sig,
+int DILITHIUM_NAMESPACE(crypto_sign_verify)(
+        const uint8_t *sig,
         size_t siglen,
         const uint8_t *m,
         size_t mlen,
-        const uint8_t *pk) {
+        const uint8_t *pk
+) {
     unsigned int i, j, pos = 0;
     /* PQCLEAN_DILITHIUM2_AVX2_polyw1_pack writes additional 14 bytes */
     ALIGNED_UINT8(K * POLYW1_PACKEDBYTES + 14) buf;

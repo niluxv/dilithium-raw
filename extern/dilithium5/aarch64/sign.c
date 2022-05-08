@@ -8,7 +8,7 @@
 #include <stdint.h>
 
 /*************************************************
-* Name:        crypto_sign_keypair
+* Name:        PQCLEAN_DILITHIUM5_AARCH64_crypto_sign_keypair
 *
 * Description: Generates public and private key.
 *
@@ -16,15 +16,17 @@
 *                             array of CRYPTO_PUBLICKEYBYTES bytes)
 *              - uint8_t *sk: pointer to output private key (allocated
 *                             array of CRYPTO_SECRETKEYBYTES bytes)
-*              - uint8_t random[2 * SEEDBYTES + CRHBYTES]: pointer to array filled with random
-*                             bytes; needs to live until the function returns
+*              - uint8_t random[2 * SEEDBYTES + CRHBYTES]:
+*                             pointer to array filled with random bytes;
+*                             needs to live until the function returns
 *
 * Returns 0 (success)
 **************************************************/
 int DILITHIUM_NAMESPACE(crypto_sign_keypair)(
         uint8_t *pk,
         uint8_t *sk,
-        uint8_t random[2 * SEEDBYTES + CRHBYTES]) {
+        uint8_t random[2 * SEEDBYTES + CRHBYTES]
+) {
     uint8_t tr[SEEDBYTES];
     const uint8_t *rho, *rhoprime, *key;
     polyvecl mat[K];
@@ -65,11 +67,11 @@ int DILITHIUM_NAMESPACE(crypto_sign_keypair)(
 }
 
 /*************************************************
-* Name:        crypto_sign_signature
+* Name:        PQCLEAN_DILITHIUM5_AARCH64_crypto_sign_signature
 *
 * Description: Computes signature.
 *
-* Arguments:   - uint8_t *sig:   pointer to output signature (of length CRYPTO_BYTES)
+* Arguments:   - uint8_t *sig:   pointer to output signature (of length PQCLEAN_DILITHIUM5_AARCH64_CRYPTO_BYTES)
 *              - size_t *siglen: pointer to output length of signature
 *              - uint8_t *m:     pointer to message to be signed
 *              - size_t mlen:    length of message
@@ -78,9 +80,12 @@ int DILITHIUM_NAMESPACE(crypto_sign_keypair)(
 * Returns 0 (success)
 **************************************************/
 int DILITHIUM_NAMESPACE(crypto_sign_signature)(
-        uint8_t *sig, size_t *siglen,
-        const uint8_t *m, size_t mlen,
-        const uint8_t *sk) {
+        uint8_t *sig,
+        size_t *siglen,
+        const uint8_t *m,
+        size_t mlen,
+        const uint8_t *sk
+) {
     unsigned int n;
     uint8_t seedbuf[3 * SEEDBYTES + 2 * CRHBYTES];
     uint8_t *rho, *tr, *key, *mu, *rhoprime;
@@ -178,7 +183,7 @@ rej:
 }
 
 /*************************************************
-* Name:        crypto_sign_verify
+* Name:        PQCLEAN_DILITHIUM5_AARCH64_crypto_sign_verify
 *
 * Description: Verifies signature.
 *
@@ -191,9 +196,12 @@ rej:
 * Returns 0 if signature could be verified correctly and -1 otherwise
 **************************************************/
 int DILITHIUM_NAMESPACE(crypto_sign_verify)(
-        const uint8_t *sig, size_t siglen,
-        const uint8_t *m, size_t mlen,
-        const uint8_t *pk) {
+        const uint8_t *sig,
+        size_t siglen,
+        const uint8_t *m,
+        size_t mlen,
+        const uint8_t *pk
+) {
     unsigned int i;
     uint8_t buf[K * POLYW1_PACKEDBYTES];
     uint8_t rho[SEEDBYTES];
