@@ -6,8 +6,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-void PQCLEAN_DILITHIUM3_CLEAN_challenge(poly *c, const uint8_t seed[SEEDBYTES]);
-
 int PQCLEAN_DILITHIUM3_CLEAN_crypto_sign_keypair(
     uint8_t *pk, uint8_t *sk,
     uint8_t random[2 * SEEDBYTES + CRHBYTES]);

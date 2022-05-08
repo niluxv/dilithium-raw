@@ -1,7 +1,6 @@
 #ifndef PQCLEAN_DILITHIUM2_AARCH64_API_H
 #define PQCLEAN_DILITHIUM2_AARCH64_API_H
 
-
 #include <stddef.h>
 #include <stdint.h>
 
