@@ -35,8 +35,8 @@ extern "C" {{
     /// cryptographically secure random bytes, living at least until the
     /// function returns.
     pub fn PQCLEAN_DILITHIUM{level}_{IMPL}_crypto_sign_keypair(
-        pk: *mut u8,
-        sk: *mut u8,
+        pk: *mut [u8; PQCLEAN_DILITHIUM{level}_{IMPL}_CRYPTO_PUBLICKEYBYTES],
+        sk: *mut [u8; PQCLEAN_DILITHIUM{level}_{IMPL}_CRYPTO_SECRETKEYBYTES],
         random: *mut [u8; 128],
     ) -> c_int;
 
@@ -45,7 +45,7 @@ extern "C" {{
         siglen: *mut size_t,
         m: *const u8,
         mlen: size_t,
-        sk: *const u8,
+        sk: *const [u8; PQCLEAN_DILITHIUM{level}_{IMPL}_CRYPTO_SECRETKEYBYTES],
     ) -> c_int;
 
     pub fn PQCLEAN_DILITHIUM{level}_{IMPL}_crypto_sign_verify(
@@ -53,7 +53,7 @@ extern "C" {{
         siglen: size_t,
         m: *const u8,
         mlen: size_t,
-        pk: *const u8,
+        pk: *const [u8; PQCLEAN_DILITHIUM{level}_{IMPL}_CRYPTO_PUBLICKEYBYTES],
     ) -> c_int;
 }}
 
@@ -71,8 +71,8 @@ mod tests {{
         let mut random = [37u8; 128];
         let res = unsafe {{
             PQCLEAN_DILITHIUM{level}_{IMPL}_crypto_sign_keypair(
-                &mut pubkey as *mut u8,
-                &mut seckey as *mut u8,
+                &mut pubkey as *mut [u8; PQCLEAN_DILITHIUM{level}_{IMPL}_CRYPTO_PUBLICKEYBYTES],
+                &mut seckey as *mut [u8; PQCLEAN_DILITHIUM{level}_{IMPL}_CRYPTO_SECRETKEYBYTES],
                 &mut random as *mut [u8; 128],
             )
         }};
@@ -86,7 +86,7 @@ mod tests {{
                 &mut len as *mut usize,
                 msg as *const u8,
                 msg.len(),
-                &seckey as *const u8,
+                &seckey as *const [u8; PQCLEAN_DILITHIUM{level}_{IMPL}_CRYPTO_SECRETKEYBYTES],
             )
         }};
         assert_eq!(res, 0);
@@ -97,7 +97,7 @@ mod tests {{
                 len,
                 msg as *const u8,
                 msg.len(),
-                &pubkey as *const u8,
+                &pubkey as *const [u8; PQCLEAN_DILITHIUM{level}_{IMPL}_CRYPTO_PUBLICKEYBYTES],
             )
         }};
         assert_eq!(res, 0, "Invalid signature crated!");
