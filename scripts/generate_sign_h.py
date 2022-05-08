@@ -25,7 +25,7 @@ def main():
 int PQCLEAN_DILITHIUM{level}_{IMPL}_crypto_sign_keypair(
     uint8_t pk[PQCLEAN_DILITHIUM{level}_{IMPL}_CRYPTO_PUBLICKEYBYTES],
     uint8_t sk[PQCLEAN_DILITHIUM{level}_{IMPL}_CRYPTO_SECRETKEYBYTES],
-    uint8_t random[128]
+    uint8_t random[2 * SEEDBYTES + CRHBYTES]
 );
 
 int PQCLEAN_DILITHIUM{level}_{IMPL}_crypto_sign_signature(

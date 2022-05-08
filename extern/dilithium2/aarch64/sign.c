@@ -12,20 +12,22 @@
 *
 * Description: Generates public and private key.
 *
-* Arguments:   - uint8_t *pk: pointer to output public key (allocated
-*                             array of CRYPTO_PUBLICKEYBYTES bytes)
-*              - uint8_t *sk: pointer to output private key (allocated
-*                             array of CRYPTO_SECRETKEYBYTES bytes)
+* Arguments:   - uint8_t pk[DILITHIUM_NAMESPACE(CRYPTO_PUBLICKEYBYTES)]:
+*                       pointer to output public key (allocated
+*                       array of CRYPTO_PUBLICKEYBYTES bytes)
+*              - uint8_t sk[DILITHIUM_NAMESPACE(CRYPTO_SECRETKEYBYTES)]:
+*                       pointer to output private key (allocated
+*                       array of CRYPTO_SECRETKEYBYTES bytes)
 *              - uint8_t random[2 * SEEDBYTES + CRHBYTES]:
-*                             pointer to array filled with random bytes;
-*                             needs to live until the function returns
+*                       pointer to array filled with random bytes;
+*                       needs to live until the function returns
 *
 * Returns 0 (success)
 **************************************************/
 int DILITHIUM_NAMESPACE(crypto_sign_keypair)(
-        uint8_t *pk,
-        uint8_t *sk,
-        uint8_t random[2 * SEEDBYTES + CRHBYTES]
+    uint8_t pk[DILITHIUM_NAMESPACE(CRYPTO_PUBLICKEYBYTES)],
+    uint8_t sk[DILITHIUM_NAMESPACE(CRYPTO_SECRETKEYBYTES)],
+    uint8_t random[2 * SEEDBYTES + CRHBYTES]
 ) {
     uint8_t tr[SEEDBYTES];
     const uint8_t *rho, *rhoprime, *key;
@@ -71,20 +73,20 @@ int DILITHIUM_NAMESPACE(crypto_sign_keypair)(
 *
 * Description: Computes signature.
 *
-* Arguments:   - uint8_t *sig:   pointer to output signature (of length PQCLEAN_DILITHIUM2_AARCH64_CRYPTO_BYTES)
-*              - size_t *siglen: pointer to output length of signature
-*              - uint8_t *m:     pointer to message to be signed
+* Arguments:   - uint8_t* sig:   pointer to output signature (allocated array
+*                       of CRYPTO_BYTES bytes)
+*              - size_t* siglen: pointer to output length of signature
+*              - uint8_t* m:     pointer to message to be signed
 *              - size_t mlen:    length of message
-*              - uint8_t *sk:    pointer to bit-packed secret key
+*              - const uint8_t sk[DILITHIUM_NAMESPACE(CRYPTO_SECRETKEYBYTES)]:
+*                       pointer to bit-packed secret key
 *
 * Returns 0 (success)
 **************************************************/
 int DILITHIUM_NAMESPACE(crypto_sign_signature)(
-        uint8_t *sig,
-        size_t *siglen,
-        const uint8_t *m,
-        size_t mlen,
-        const uint8_t *sk
+    uint8_t* sig, size_t* siglen,
+    const uint8_t* m, size_t mlen,
+    const uint8_t sk[DILITHIUM_NAMESPACE(CRYPTO_SECRETKEYBYTES)]
 ) {
     unsigned int n;
     uint8_t seedbuf[3 * SEEDBYTES + 2 * CRHBYTES];
@@ -187,20 +189,19 @@ rej:
 *
 * Description: Verifies signature.
 *
-* Arguments:   - uint8_t *m: pointer to input signature
-*              - size_t siglen: length of signature
-*              - const uint8_t *m: pointer to message
-*              - size_t mlen: length of message
-*              - const uint8_t *pk: pointer to bit-packed public key
+* Arguments:   - uint8_t* m:        pointer to input signature
+*              - size_t siglen:     length of signature
+*              - const uint8_t* m:  pointer to message
+*              - size_t mlen:       length of message
+*              - const uint8_t pk[DILITHIUM_NAMESPACE(CRYPTO_PUBLICKEYBYTES)]:
+*                       pointer to bit-packed public key
 *
 * Returns 0 if signature could be verified correctly and -1 otherwise
 **************************************************/
 int DILITHIUM_NAMESPACE(crypto_sign_verify)(
-        const uint8_t *sig,
-        size_t siglen,
-        const uint8_t *m,
-        size_t mlen,
-        const uint8_t *pk
+    const uint8_t* sig, size_t siglen,
+    const uint8_t* m, size_t mlen,
+    const uint8_t pk[DILITHIUM_NAMESPACE(CRYPTO_PUBLICKEYBYTES)]
 ) {
     unsigned int i;
     uint8_t buf[K * POLYW1_PACKEDBYTES];
