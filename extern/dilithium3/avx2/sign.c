@@ -117,15 +117,19 @@ int PQCLEAN_DILITHIUM3_AVX2_crypto_sign_keypair(uint8_t *pk,
 *
 * Description: Computes signature.
 *
-* Arguments:   - uint8_t *sig: pointer to output signature (of length PQCLEAN_DILITHIUM3_AVX2_CRYPTO_BYTES)
+* Arguments:   - uint8_t *sig:   pointer to output signature (of length PQCLEAN_DILITHIUM3_AVX2_CRYPTO_BYTES)
 *              - size_t *siglen: pointer to output length of signature
-*              - uint8_t *m: pointer to message to be signed
-*              - size_t mlen: length of message
-*              - uint8_t *sk: pointer to bit-packed secret key
+*              - uint8_t *m:     pointer to message to be signed
+*              - size_t mlen:    length of message
+*              - uint8_t *sk:    pointer to bit-packed secret key
 *
 * Returns 0 (success)
 **************************************************/
-int PQCLEAN_DILITHIUM3_AVX2_crypto_sign_signature(uint8_t *sig, size_t *siglen, const uint8_t *m, size_t mlen, const uint8_t *sk) {
+int PQCLEAN_DILITHIUM3_AVX2_crypto_sign_signature(uint8_t *sig,
+        size_t *siglen,
+        const uint8_t *m,
+        size_t mlen,
+        const uint8_t *sk) {
     unsigned int i, n, pos;
     uint8_t seedbuf[3 * SEEDBYTES + 2 * CRHBYTES];
     uint8_t *rho, *tr, *key, *mu, *rhoprime;
@@ -259,7 +263,11 @@ rej:
 *
 * Returns 0 if signature could be verified correctly and -1 otherwise
 **************************************************/
-int PQCLEAN_DILITHIUM3_AVX2_crypto_sign_verify(const uint8_t *sig, size_t siglen, const uint8_t *m, size_t mlen, const uint8_t *pk) {
+int PQCLEAN_DILITHIUM3_AVX2_crypto_sign_verify(const uint8_t *sig,
+        size_t siglen,
+        const uint8_t *m,
+        size_t mlen,
+        const uint8_t *pk) {
     unsigned int i, j, pos = 0;
     /* PQCLEAN_DILITHIUM3_AVX2_polyw1_pack writes additional 14 bytes */
     ALIGNED_UINT8(K * POLYW1_PACKEDBYTES + 14) buf;
