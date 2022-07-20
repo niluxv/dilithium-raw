@@ -63,7 +63,7 @@ fn main() {
     let target_env = env::var("CARGO_CFG_TARGET_ENV").unwrap();
     let target_features: std::collections::HashSet<String> = env::var("CARGO_CFG_TARGET_FEATURE")
         .unwrap()
-        .split(",")
+        .split(',')
         .map(|s| s.to_string())
         .collect();
     let target_pointer_width = env::var("CARGO_CFG_TARGET_POINTER_WIDTH").unwrap();

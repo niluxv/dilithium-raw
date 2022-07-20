@@ -8,16 +8,30 @@ build = "build.rs"
 
 [features]
 default = ["dilithium2", "dilithium3", "dilithium5", "avx2", "aarch64", "dynamic_cpu_features"]
+# enable dilithium 2
 dilithium2 = []
+# enable dilithium 3
 dilithium3 = []
+# enable dilithium 5
 dilithium5 = []
+# enable the avx2 implementation on x86_64 targets for CPUs with avx2 support
 avx2 = []
+# enable the aarch64/neon implementation on aarch64 targets
 aarch64 = []
+# ???
 dynamic_cpu_features = []
+# serialize and deserialize keys and signatures using serde
+serde = ["dep:serde"]
+# extra hazardous material; gives more control
+hazmat = []
 
 
 [dependencies]
 cty = "0.2"
+serde = { version = "1.0", optional = true, features = ["derive"] }
+
+[dev-dependencies]
+serde_test = { version = "1.0" }
 
 [build-dependencies]
 cc = "1.0"

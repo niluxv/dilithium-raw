@@ -9,10 +9,10 @@ pub mod clean {
 
     #[link(name = "dilithium3_clean")]
     extern "C" {
-        /// Generate a new keypair, writing the public key to `pk` and the secret
-        /// key to `sk`. Requires a buffer `random` to be filled with
-        /// cryptographically secure random bytes, living at least until the
-        /// function returns.
+        /// Generate a new keypair, writing the public key to `pk` and the
+        /// secret key to `sk`. Requires a buffer `random` to be filled
+        /// with cryptographically secure random bytes, living at least
+        /// until the function returns.
         fn PQCLEAN_DILITHIUM3_CLEAN_crypto_sign_keypair(
             pk: *mut [u8; PUBLICKEYBYTES],
             sk: *mut [u8; SECRETKEYBYTES],
@@ -42,7 +42,11 @@ pub mod clean {
         random: &mut [u8; 128],
     ) -> c_int {
         unsafe {
-            PQCLEAN_DILITHIUM3_CLEAN_crypto_sign_keypair(pk as *mut _, sk as *mut _, random as *mut _)
+            PQCLEAN_DILITHIUM3_CLEAN_crypto_sign_keypair(
+                pk as *mut _,
+                sk as *mut _,
+                random as *mut _,
+            )
         }
     }
 
@@ -91,34 +95,15 @@ pub mod clean {
             let mut pubkey = [0u8; PUBLICKEYBYTES];
             // not secure random, but deterministic and good enough for the test
             let mut random = [37u8; 128];
-            let res = unsafe {
-                crypto_sign_keypair(
-                    &mut pubkey,
-                    &mut seckey,
-                    &mut random,
-                )
-            };
+            let res = unsafe { crypto_sign_keypair(&mut pubkey, &mut seckey, &mut random) };
             assert_eq!(res, 0);
 
             let mut sig = [0u8; SIGNATUREBYTES];
             let mut len: usize = 0;
-            let res = unsafe {
-                crypto_sign_signature(
-                    &mut sig,
-                    &mut len,
-                    &msg[..],
-                    &seckey,
-                )
-            };
+            let res = unsafe { crypto_sign_signature(&mut sig, &mut len, &msg[..], &seckey) };
             assert_eq!(res, 0);
 
-            let res = unsafe {
-                crypto_sign_verify(
-                    &sig[..len],
-                    &msg[..],
-                    &pubkey,
-                )
-            };
+            let res = unsafe { crypto_sign_verify(&sig[..len], &msg[..], &pubkey) };
             assert_eq!(res, 0, "Invalid signature crated!");
         }
     }
@@ -130,10 +115,10 @@ pub mod avx2 {
 
     #[link(name = "dilithium3_avx2")]
     extern "C" {
-        /// Generate a new keypair, writing the public key to `pk` and the secret
-        /// key to `sk`. Requires a buffer `random` to be filled with
-        /// cryptographically secure random bytes, living at least until the
-        /// function returns.
+        /// Generate a new keypair, writing the public key to `pk` and the
+        /// secret key to `sk`. Requires a buffer `random` to be filled
+        /// with cryptographically secure random bytes, living at least
+        /// until the function returns.
         fn PQCLEAN_DILITHIUM3_AVX2_crypto_sign_keypair(
             pk: *mut [u8; PUBLICKEYBYTES],
             sk: *mut [u8; SECRETKEYBYTES],
@@ -163,7 +148,11 @@ pub mod avx2 {
         random: &mut [u8; 128],
     ) -> c_int {
         unsafe {
-            PQCLEAN_DILITHIUM3_AVX2_crypto_sign_keypair(pk as *mut _, sk as *mut _, random as *mut _)
+            PQCLEAN_DILITHIUM3_AVX2_crypto_sign_keypair(
+                pk as *mut _,
+                sk as *mut _,
+                random as *mut _,
+            )
         }
     }
 
@@ -212,34 +201,15 @@ pub mod avx2 {
             let mut pubkey = [0u8; PUBLICKEYBYTES];
             // not secure random, but deterministic and good enough for the test
             let mut random = [37u8; 128];
-            let res = unsafe {
-                crypto_sign_keypair(
-                    &mut pubkey,
-                    &mut seckey,
-                    &mut random,
-                )
-            };
+            let res = unsafe { crypto_sign_keypair(&mut pubkey, &mut seckey, &mut random) };
             assert_eq!(res, 0);
 
             let mut sig = [0u8; SIGNATUREBYTES];
             let mut len: usize = 0;
-            let res = unsafe {
-                crypto_sign_signature(
-                    &mut sig,
-                    &mut len,
-                    &msg[..],
-                    &seckey,
-                )
-            };
+            let res = unsafe { crypto_sign_signature(&mut sig, &mut len, &msg[..], &seckey) };
             assert_eq!(res, 0);
 
-            let res = unsafe {
-                crypto_sign_verify(
-                    &sig[..len],
-                    &msg[..],
-                    &pubkey,
-                )
-            };
+            let res = unsafe { crypto_sign_verify(&sig[..len], &msg[..], &pubkey) };
             assert_eq!(res, 0, "Invalid signature crated!");
         }
     }
@@ -251,10 +221,10 @@ pub mod aarch64 {
 
     #[link(name = "dilithium3_aarch64")]
     extern "C" {
-        /// Generate a new keypair, writing the public key to `pk` and the secret
-        /// key to `sk`. Requires a buffer `random` to be filled with
-        /// cryptographically secure random bytes, living at least until the
-        /// function returns.
+        /// Generate a new keypair, writing the public key to `pk` and the
+        /// secret key to `sk`. Requires a buffer `random` to be filled
+        /// with cryptographically secure random bytes, living at least
+        /// until the function returns.
         fn PQCLEAN_DILITHIUM3_AARCH64_crypto_sign_keypair(
             pk: *mut [u8; PUBLICKEYBYTES],
             sk: *mut [u8; SECRETKEYBYTES],
@@ -284,7 +254,11 @@ pub mod aarch64 {
         random: &mut [u8; 128],
     ) -> c_int {
         unsafe {
-            PQCLEAN_DILITHIUM3_AARCH64_crypto_sign_keypair(pk as *mut _, sk as *mut _, random as *mut _)
+            PQCLEAN_DILITHIUM3_AARCH64_crypto_sign_keypair(
+                pk as *mut _,
+                sk as *mut _,
+                random as *mut _,
+            )
         }
     }
 
@@ -333,34 +307,15 @@ pub mod aarch64 {
             let mut pubkey = [0u8; PUBLICKEYBYTES];
             // not secure random, but deterministic and good enough for the test
             let mut random = [37u8; 128];
-            let res = unsafe {
-                crypto_sign_keypair(
-                    &mut pubkey,
-                    &mut seckey,
-                    &mut random,
-                )
-            };
+            let res = unsafe { crypto_sign_keypair(&mut pubkey, &mut seckey, &mut random) };
             assert_eq!(res, 0);
 
             let mut sig = [0u8; SIGNATUREBYTES];
             let mut len: usize = 0;
-            let res = unsafe {
-                crypto_sign_signature(
-                    &mut sig,
-                    &mut len,
-                    &msg[..],
-                    &seckey,
-                )
-            };
+            let res = unsafe { crypto_sign_signature(&mut sig, &mut len, &msg[..], &seckey) };
             assert_eq!(res, 0);
 
-            let res = unsafe {
-                crypto_sign_verify(
-                    &sig[..len],
-                    &msg[..],
-                    &pubkey,
-                )
-            };
+            let res = unsafe { crypto_sign_verify(&sig[..len], &msg[..], &pubkey) };
             assert_eq!(res, 0, "Invalid signature crated!");
         }
     }
