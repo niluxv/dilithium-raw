@@ -3,6 +3,7 @@
 #![warn(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
 
 pub mod ffi;
+pub mod util;
 
 /// Message did verify correctly.
 pub struct VerificationOk;
@@ -18,24 +19,23 @@ mod sanity {
 }
 
 mod macros;
-mod util;
 
 #[cfg(feature = "dilithium2")]
 pub mod dilithium2 {
     use crate::ffi::dilithium2::*;
-    crate::macros::impl_dilithium_module!();
+    crate::macros::impl_dilithium_module!("regression_tests/dilithium2.ron");
 }
 
 #[cfg(feature = "dilithium3")]
 pub mod dilithium3 {
     use crate::ffi::dilithium3::*;
-    crate::macros::impl_dilithium_module!();
+    crate::macros::impl_dilithium_module!("regression_tests/dilithium3.ron");
 }
 
 #[cfg(feature = "dilithium5")]
 pub mod dilithium5 {
     use crate::ffi::dilithium5::*;
-    crate::macros::impl_dilithium_module!();
+    crate::macros::impl_dilithium_module!("regression_tests/dilithium5.ron");
 }
 
 #[cfg(test)]

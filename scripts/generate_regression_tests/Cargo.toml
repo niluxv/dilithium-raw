@@ -1,0 +1,14 @@
+[package]
+name = "generate_regression_tests"
+version = "0.1.0"
+edition = "2021"
+description = "generate regession test values and write them to `../../src/regression_tests/dilithiumX.ron`"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+dilithium-raw = { path = "../..", features = ["serde"] }
+# clap = { version = "3.2", features = ["derive"] }
+ron = "0.7"
+rand = "0.8"
+serde = { version = "1.0", features = ["derive"] }

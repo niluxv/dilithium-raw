@@ -1,7 +1,7 @@
 //! Macro to generate rusty/non-ffi dilithium modules.
 
 macro_rules! impl_dilithium_module {
-    () => {
+    ($regression_test_file:expr) => {
         #[derive(Debug, PartialEq, Eq, Clone)]
         #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
         pub struct PublicKey($crate::util::ByteArray<PUBLICKEYBYTES>);
@@ -220,6 +220,42 @@ macro_rules! impl_dilithium_module {
                 let (pubkey2, seckey2) = generate_keypair(&mut random);
                 assert_eq!(pubkey1, pubkey2);
                 assert_eq!(seckey1.as_ref(), seckey2.as_ref());
+            }
+        }
+
+        #[cfg(all(test, feature = "serde"))]
+        mod regression_test {
+            use super::*;
+
+            #[derive(serde::Serialize, serde::Deserialize)]
+            struct RegressionTestExample {
+                seed: crate::util::ByteArray<128>,
+                pubkey: PublicKey,
+                seckey: SecretKey,
+                message: String,
+                signature: Signature,
+            }
+
+            #[test]
+            fn test_keygen_sign_verify_regression() {
+                let ron_str = include_str!($regression_test_file);
+                let regression_tests: Vec<RegressionTestExample> =
+                    ron::de::from_str(ron_str).expect("could not deserialize regression test file");
+
+                for example in regression_tests {
+                    let mut seed = example.seed.clone();
+                    let (pubkey, seckey) = generate_keypair(&mut seed.0);
+                    // check seed is not changed
+                    assert_eq!(seed, example.seed);
+                    // check key generation determinism
+                    assert_eq!(pubkey, example.pubkey);
+                    assert_eq!(seckey.as_ref(), example.seckey.as_ref());
+                    // check signature determinism
+                    let signature = sign(&example.message, &seckey);
+                    assert_eq!(signature, example.signature);
+                    // check verification success
+                    assert!(verify(&example.message, &signature, &pubkey).is_ok());
+                }
             }
         }
     };
