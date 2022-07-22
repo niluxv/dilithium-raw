@@ -4,6 +4,9 @@ version = "0.1.0"
 edition = "2021"
 build = "build.rs"
 description = "Low level library for dilithium signatures"
+license-file = "COPYING"
+categories = ["cryptography"]
+keywords = ["crypto", "post-quantum", "signature", "signing", "dilithium"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

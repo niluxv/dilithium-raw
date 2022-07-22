@@ -1,0 +1,24 @@
+Copyright and license per file:
+* everything in `extern/dilithium2`, `extern/dilithium3` and `extern/dilithium5` was originally
+  copied from the `pqclean` project (<https://github.com/PQClean/PQClean>), but modified
+  afterwards. The original was licensed CC0 / Public domain, and so are any modifications.
+* everything in `extern/common` is copied from the `pqclean` project
+  (<https://github.com/PQClean/PQClean>), and unmodified. These files contain licensing information
+  at the top of the file, and are all either in public domain / CC0 or MIT licensed.
+* `scripts/generate_api_h.py`, `scripts/generate_sign_c.py` and `scripts/generate_sign_h.py` are
+  based on the C code in `extern/dilithium2`, `extern/dilithium3` and `extern/dilithium5` and also
+  licensed CC0 / Public domain.
+* everything else is original work from the crate authors,
+  Copyright (c) 2022 niluxv <niluxv.opensource.C-h2ty6xl@yandex.com>
+  and licensed under the MIT license <LICENSE.MIT> or the Apache License, Version 2.0
+  <LICENSE.APACHE>, at your option.
+
+TLDR: everything can be used under the conditions of the MIT license.
+
+Note: This crate is by no means endorsed by the `pqclean` project!
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT
+OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
