@@ -1,12 +1,44 @@
 //! Macro to generate rusty/non-ffi dilithium modules.
 
+macro_rules! newtype_as_ref {
+    ($new_ty:ty, $inner_ty:ty) => {
+        impl core::convert::AsRef<$inner_ty> for $new_ty {
+            fn as_ref(&self) -> &$inner_ty {
+                &self.0
+            }
+        }
+    };
+}
+
+macro_rules! newtype_from {
+    ($new_ty:ty, $inner_ty:ty) => {
+        impl core::convert::From<$inner_ty> for $new_ty {
+            fn from(other: $inner_ty) -> Self {
+                Self(other)
+            }
+        }
+    };
+}
+
+pub(crate) use {newtype_as_ref, newtype_from};
+
 macro_rules! impl_dilithium_module {
     ($regression_test_file:expr) => {
+        /// Public key.
+        ///
+        /// Internally consists of a fixed length byte array.
         #[derive(Debug, PartialEq, Eq, Clone)]
         #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
         pub struct PublicKey($crate::util::ByteArray<PUBLICKEYBYTES>);
+
+        /// Secret key.
+        ///
+        /// Internally consists of a fixed length byte array.
+        #[cfg_attr(test, derive(Debug, PartialEq))]
         #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
         pub struct SecretKey($crate::util::ByteArray<SECRETKEYBYTES>);
+
+        /// Signature.
         #[derive(Debug, PartialEq, Eq, Clone)]
         #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
         pub struct Signature($crate::util::ByteArrayVec<SIGNATUREBYTES>);
@@ -17,7 +49,14 @@ macro_rules! impl_dilithium_module {
             }
         }
 
-        // You never want to change a secret key, right?
+        $crate::macros::newtype_as_ref!(PublicKey, $crate::util::ByteArray<PUBLICKEYBYTES>);
+        $crate::macros::newtype_as_ref!(SecretKey, $crate::util::ByteArray<SECRETKEYBYTES>);
+        $crate::macros::newtype_as_ref!(Signature, $crate::util::ByteArrayVec<SIGNATUREBYTES>);
+        $crate::macros::newtype_from!(PublicKey, $crate::util::ByteArray<PUBLICKEYBYTES>);
+        $crate::macros::newtype_from!(SecretKey, $crate::util::ByteArray<SECRETKEYBYTES>);
+        $crate::macros::newtype_from!(Signature, $crate::util::ByteArrayVec<SIGNATUREBYTES>);
+
+        // You never want to change a public key, right?
         #[cfg(any(test, feature = "hazmat"))]
         impl core::convert::AsMut<[u8]> for PublicKey {
             fn as_mut(&mut self) -> &mut [u8] {
@@ -127,6 +166,11 @@ macro_rules! impl_dilithium_module {
 
         /// Generate a new keypair. Requires a buffer `random` to be filled with
         /// cryptographically secure random bytes.
+        ///
+        /// # Security
+        /// The buffer `random` MUST be completely filled with cryptographically secure
+        /// random bytes. Use a proper cryptographically secure random number generator
+        /// for it (e.g. `rand::rngs::OsRng`)!
         pub fn generate_keypair(random: &mut [u8; 128]) -> (PublicKey, SecretKey) {
             let mut pk = PublicKey::empty();
             let mut sk = SecretKey::empty();
@@ -136,7 +180,7 @@ macro_rules! impl_dilithium_module {
             (pk, sk)
         }
 
-        /// Sign message.
+        /// Sign message `m` with secret key `sk`.
         pub fn sign<M: AsRef<[u8]>>(m: M, sk: &SecretKey) -> Signature {
             let mut sigbuf = [0u8; SIGNATUREBYTES];
             let mut siglen: usize = 0;
@@ -149,7 +193,7 @@ macro_rules! impl_dilithium_module {
             Signature($crate::util::ByteArrayVec::new(sigbuf, siglen))
         }
 
-        /// Verify signature.
+        /// Verify signature `sig` for message `m` and public key `pk`.
         pub fn verify<M: AsRef<[u8]>>(
             m: M,
             sig: &Signature,
@@ -219,7 +263,7 @@ macro_rules! impl_dilithium_module {
                 assert_eq!(random, [37u8; 128]);
                 let (pubkey2, seckey2) = generate_keypair(&mut random);
                 assert_eq!(pubkey1, pubkey2);
-                assert_eq!(seckey1.as_ref(), seckey2.as_ref());
+                assert_eq!(seckey1, seckey2);
             }
         }
 
@@ -249,7 +293,7 @@ macro_rules! impl_dilithium_module {
                     assert_eq!(seed, example.seed);
                     // check key generation determinism
                     assert_eq!(pubkey, example.pubkey);
-                    assert_eq!(seckey.as_ref(), example.seckey.as_ref());
+                    assert_eq!(seckey, example.seckey);
                     // check signature determinism
                     let signature = sign(&example.message, &seckey);
                     assert_eq!(signature, example.signature);
