@@ -5,13 +5,16 @@ edition = "2021"
 build = "build.rs"
 description = "Low level library for dilithium signatures"
 license-file = "COPYING"
+readme = "README.md"
 categories = ["cryptography"]
 keywords = ["crypto", "post-quantum", "signature", "signing", "dilithium"]
+repository = "https://github.com/niluxv/dilithium-raw"
+include = ["src/**/*", "extern/**/*", "build.rs", "COPYING", "LICENSE.*", "README.md"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-default = ["dilithium2", "dilithium3", "dilithium5", "avx2", "aarch64", "dynamic_cpu_features"]
+default = ["dilithium2", "dilithium3", "dilithium5", "avx2", "aarch64"]
 # enable dilithium 2
 dilithium2 = []
 # enable dilithium 3
@@ -22,8 +25,6 @@ dilithium5 = []
 avx2 = []
 # enable the aarch64/neon implementation on aarch64 targets
 aarch64 = []
-# ???
-dynamic_cpu_features = []
 # serialize and deserialize keys and signatures using serde
 serde = ["dep:serde"]
 # extra hazardous material; gives more control
