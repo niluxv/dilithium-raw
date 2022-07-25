@@ -133,7 +133,6 @@ int DILITHIUM_NAMESPACE(crypto_sign_keypair)(
 *
 * Arguments:   - uint8_t* sig:   pointer to output signature (allocated array
 *                       of CRYPTO_BYTES bytes)
-*              - size_t* siglen: pointer to output length of signature
 *              - uint8_t* m:     pointer to message to be signed
 *              - size_t mlen:    length of message
 *              - const uint8_t sk[DILITHIUM_NAMESPACE(CRYPTO_SECRETKEYBYTES)]:
@@ -142,7 +141,7 @@ int DILITHIUM_NAMESPACE(crypto_sign_keypair)(
 * Returns 0 (success)
 **************************************************/
 int DILITHIUM_NAMESPACE(crypto_sign_signature)(
-    uint8_t* sig, size_t* siglen,
+    uint8_t* sig,
     const uint8_t* m, size_t mlen,
     const uint8_t sk[DILITHIUM_NAMESPACE(CRYPTO_SECRETKEYBYTES)]
 ) {
@@ -263,7 +262,6 @@ rej:
         PQCLEAN_DILITHIUM5_AVX2_polyz_pack(sig + SEEDBYTES + i * POLYZ_PACKEDBYTES, &z.vec[i]);
     }
 
-    *siglen = PQCLEAN_DILITHIUM5_AVX2_CRYPTO_BYTES;
     return 0;
 }
 
@@ -273,7 +271,6 @@ rej:
 * Description: Verifies signature.
 *
 * Arguments:   - uint8_t* m:        pointer to input signature
-*              - size_t siglen:     length of signature
 *              - const uint8_t* m:  pointer to message
 *              - size_t mlen:       length of message
 *              - const uint8_t pk[DILITHIUM_NAMESPACE(CRYPTO_PUBLICKEYBYTES)]:
@@ -282,7 +279,7 @@ rej:
 * Returns 0 if signature could be verified correctly and -1 otherwise
 **************************************************/
 int DILITHIUM_NAMESPACE(crypto_sign_verify)(
-    const uint8_t* sig, size_t siglen,
+    const uint8_t* sig,
     const uint8_t* m, size_t mlen,
     const uint8_t pk[DILITHIUM_NAMESPACE(CRYPTO_PUBLICKEYBYTES)]
 ) {
@@ -296,10 +293,6 @@ int DILITHIUM_NAMESPACE(crypto_sign_verify)(
     polyvecl z;
     poly c, w1, h;
     shake256incctx state;
-
-    if (siglen != PQCLEAN_DILITHIUM5_AVX2_CRYPTO_BYTES) {
-        return -1;
-    }
 
     /* Compute CRH(H(rho, t1), msg) */
     shake256(mu, SEEDBYTES, pk, PQCLEAN_DILITHIUM5_AVX2_CRYPTO_PUBLICKEYBYTES);

@@ -40,33 +40,9 @@ impl<const N: usize> ByteArray<N> {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Clone, Copy)]
-pub struct ByteArrayVec<const N: usize> {
-    pub bytes: [u8; N],
-    pub len: usize,
-}
-
-impl<const N: usize> AsRef<[u8]> for ByteArrayVec<N> {
-    fn as_ref(&self) -> &[u8] {
-        &self.bytes[..self.len]
-    }
-}
-
-impl<const N: usize> AsMut<[u8]> for ByteArrayVec<N> {
-    fn as_mut(&mut self) -> &mut [u8] {
-        &mut self.bytes[..self.len]
-    }
-}
-
-impl<const N: usize> ByteArrayVec<N> {
-    pub fn new(bytes: [u8; N], len: usize) -> Self {
-        Self { bytes, len }
-    }
-}
-
 #[cfg(feature = "serde")]
 pub mod serde {
-    use super::{ByteArray, ByteArrayVec};
+    use super::ByteArray;
     use core::fmt;
     use serde::de::{Error, Visitor};
     use serde::{Deserialize, Deserializer, Serialize, Serializer};
@@ -109,45 +85,6 @@ pub mod serde {
         }
     }
 
-    impl<const N: usize> Serialize for ByteArrayVec<N> {
-        fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: Serializer,
-        {
-            serializer.serialize_bytes(&self.bytes[..self.len])
-        }
-    }
-
-    struct ByteArrayVecVisitor<const N: usize>;
-
-    impl<'de, const N: usize> Visitor<'de> for ByteArrayVecVisitor<N> {
-        type Value = ByteArrayVec<N>;
-
-        fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-            write!(formatter, "a byte array of length at most {}", N)
-        }
-
-        fn visit_bytes<E: Error>(self, v: &[u8]) -> Result<Self::Value, E> {
-            let len = v.len();
-            if len <= N {
-                let mut bytes = [0; N];
-                bytes[..len].copy_from_slice(v);
-                Ok(ByteArrayVec { bytes, len })
-            } else {
-                Err(E::invalid_length(len, &self))
-            }
-        }
-    }
-
-    impl<'de, const N: usize> Deserialize<'de> for ByteArrayVec<N> {
-        fn deserialize<D>(deserializer: D) -> Result<ByteArrayVec<N>, D::Error>
-        where
-            D: Deserializer<'de>,
-        {
-            deserializer.deserialize_bytes(ByteArrayVecVisitor)
-        }
-    }
-
     #[cfg(test)]
     mod tests {
         use super::*;
@@ -173,27 +110,6 @@ pub mod serde {
             assert_de_tokens_error::<ByteArray<6>>(
                 &[Token::Bytes(bytes.as_ref())],
                 "invalid length 5, expected a byte array of length 6",
-            );
-        }
-
-        #[test]
-        fn test_bytearrayvec_tokens() {
-            let bytes = b"hello\0\0";
-            let serde_bytearrvec = ByteArrayVec {
-                bytes: *bytes,
-                len: 5,
-            };
-
-            assert_tokens(&serde_bytearrvec, &[Token::Bytes(b"hello".as_ref())]);
-        }
-
-        #[test]
-        fn test_bytearrayvec_len_error() {
-            let bytes = b"hello";
-
-            assert_de_tokens_error::<ByteArrayVec<4>>(
-                &[Token::Bytes(bytes.as_ref())],
-                "invalid length 5, expected a byte array of length at most 4",
             );
         }
     }

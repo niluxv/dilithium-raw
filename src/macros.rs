@@ -41,7 +41,7 @@ macro_rules! impl_dilithium_module {
         /// Signature.
         #[derive(Debug, PartialEq, Eq, Clone)]
         #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-        pub struct Signature($crate::util::ByteArrayVec<SIGNATUREBYTES>);
+        pub struct Signature($crate::util::ByteArray<SIGNATUREBYTES>);
 
         impl core::convert::AsRef<[u8]> for PublicKey {
             fn as_ref(&self) -> &[u8] {
@@ -51,10 +51,10 @@ macro_rules! impl_dilithium_module {
 
         $crate::macros::newtype_as_ref!(PublicKey, $crate::util::ByteArray<PUBLICKEYBYTES>);
         $crate::macros::newtype_as_ref!(SecretKey, $crate::util::ByteArray<SECRETKEYBYTES>);
-        $crate::macros::newtype_as_ref!(Signature, $crate::util::ByteArrayVec<SIGNATUREBYTES>);
+        $crate::macros::newtype_as_ref!(Signature, $crate::util::ByteArray<SIGNATUREBYTES>);
         $crate::macros::newtype_from!(PublicKey, $crate::util::ByteArray<PUBLICKEYBYTES>);
         $crate::macros::newtype_from!(SecretKey, $crate::util::ByteArray<SECRETKEYBYTES>);
-        $crate::macros::newtype_from!(Signature, $crate::util::ByteArrayVec<SIGNATUREBYTES>);
+        $crate::macros::newtype_from!(Signature, $crate::util::ByteArray<SIGNATUREBYTES>);
 
         // You never want to change a public key, right?
         #[cfg(any(test, feature = "hazmat"))]
@@ -104,6 +104,12 @@ macro_rules! impl_dilithium_module {
             }
         }
 
+        impl Signature {
+            fn empty() -> Self {
+                Self($crate::util::ByteArray::new([0; SIGNATUREBYTES]))
+            }
+        }
+
         mod detect_arch {
             use super::*;
             use cty::c_int;
@@ -128,25 +134,24 @@ macro_rules! impl_dilithium_module {
 
             pub unsafe fn crypto_sign_signature(
                 sig: &mut [u8; SIGNATUREBYTES],
-                siglen: &mut usize,
                 message: &[u8],
                 sk: &[u8; SECRETKEYBYTES],
             ) -> c_int {
                 #[cfg(enable_avx2)]
                 {
                     if std::is_x86_feature_detected!("avx2") {
-                        return unsafe { avx2::crypto_sign_signature(sig, siglen, message, sk) };
+                        return unsafe { avx2::crypto_sign_signature(sig, message, sk) };
                     }
                 }
                 #[cfg(enable_aarch64)]
                 {
-                    return unsafe { aarch64::crypto_sign_signature(sig, siglen, message, sk) };
+                    return unsafe { aarch64::crypto_sign_signature(sig, message, sk) };
                 }
-                unsafe { clean::crypto_sign_signature(sig, siglen, message, sk) }
+                unsafe { clean::crypto_sign_signature(sig, message, sk) }
             }
 
             pub unsafe fn crypto_sign_verify(
-                sig: &[u8],
+                sig: &[u8; SIGNATUREBYTES],
                 message: &[u8],
                 pk: &[u8; PUBLICKEYBYTES],
             ) -> c_int {
@@ -182,15 +187,12 @@ macro_rules! impl_dilithium_module {
 
         /// Sign message `m` with secret key `sk`.
         pub fn sign<M: AsRef<[u8]>>(m: M, sk: &SecretKey) -> Signature {
-            let mut sigbuf = [0u8; SIGNATUREBYTES];
-            let mut siglen: usize = 0;
+            let mut sig = Signature::empty();
             let message: &[u8] = m.as_ref();
 
-            unsafe {
-                detect_arch::crypto_sign_signature(&mut sigbuf, &mut siglen, message, sk.0.as_ref())
-            };
+            unsafe { detect_arch::crypto_sign_signature(sig.0.as_mut(), message, sk.0.as_ref()) };
 
-            Signature($crate::util::ByteArrayVec::new(sigbuf, siglen))
+            sig
         }
 
         /// Verify signature `sig` for message `m` and public key `pk`.
@@ -202,7 +204,7 @@ macro_rules! impl_dilithium_module {
             let message: &[u8] = m.as_ref();
 
             let res =
-                unsafe { detect_arch::crypto_sign_verify(sig.as_ref(), message, pk.0.as_ref()) };
+                unsafe { detect_arch::crypto_sign_verify(sig.0.as_ref(), message, pk.0.as_ref()) };
 
             if res == 0 {
                 Ok(crate::VerificationOk)
