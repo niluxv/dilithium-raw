@@ -20,16 +20,14 @@ pub mod clean {
         ) -> c_int;
 
         fn PQCLEAN_DILITHIUM2_CLEAN_crypto_sign_signature(
-            sig: *mut u8,
-            siglen: *mut size_t,
+            sig: *mut [u8; SIGNATUREBYTES],
             m: *const u8,
             mlen: size_t,
             sk: *const [u8; SECRETKEYBYTES],
         ) -> c_int;
 
         fn PQCLEAN_DILITHIUM2_CLEAN_crypto_sign_verify(
-            sig: *const u8,
-            siglen: size_t,
+            sig: *const [u8; SIGNATUREBYTES],
             m: *const u8,
             mlen: size_t,
             pk: *const [u8; PUBLICKEYBYTES],
@@ -52,14 +50,12 @@ pub mod clean {
 
     pub unsafe fn crypto_sign_signature(
         sig: &mut [u8; SIGNATUREBYTES],
-        siglen: &mut usize,
         message: &[u8],
         sk: &[u8; SECRETKEYBYTES],
     ) -> c_int {
         unsafe {
             PQCLEAN_DILITHIUM2_CLEAN_crypto_sign_signature(
-                sig as *mut u8,
-                siglen as *mut usize,
+                sig as *mut _,
                 message.as_ptr(),
                 message.len(),
                 sk as *const _,
@@ -68,14 +64,13 @@ pub mod clean {
     }
 
     pub unsafe fn crypto_sign_verify(
-        sig: &[u8],
+        sig: &[u8; SIGNATUREBYTES],
         message: &[u8],
         pk: &[u8; PUBLICKEYBYTES],
     ) -> c_int {
         unsafe {
             PQCLEAN_DILITHIUM2_CLEAN_crypto_sign_verify(
-                sig.as_ptr(),
-                sig.len(),
+                sig as *const _,
                 message.as_ptr(),
                 message.len(),
                 pk as *const _,
@@ -99,11 +94,10 @@ pub mod clean {
             assert_eq!(res, 0);
 
             let mut sig = [0u8; SIGNATUREBYTES];
-            let mut len: usize = 0;
-            let res = unsafe { crypto_sign_signature(&mut sig, &mut len, &msg[..], &seckey) };
+            let res = unsafe { crypto_sign_signature(&mut sig, &msg[..], &seckey) };
             assert_eq!(res, 0);
 
-            let res = unsafe { crypto_sign_verify(&sig[..len], &msg[..], &pubkey) };
+            let res = unsafe { crypto_sign_verify(&sig, &msg[..], &pubkey) };
             assert_eq!(res, 0, "Invalid signature crated!");
         }
     }
@@ -126,16 +120,14 @@ pub mod avx2 {
         ) -> c_int;
 
         fn PQCLEAN_DILITHIUM2_AVX2_crypto_sign_signature(
-            sig: *mut u8,
-            siglen: *mut size_t,
+            sig: *mut [u8; SIGNATUREBYTES],
             m: *const u8,
             mlen: size_t,
             sk: *const [u8; SECRETKEYBYTES],
         ) -> c_int;
 
         fn PQCLEAN_DILITHIUM2_AVX2_crypto_sign_verify(
-            sig: *const u8,
-            siglen: size_t,
+            sig: *const [u8; SIGNATUREBYTES],
             m: *const u8,
             mlen: size_t,
             pk: *const [u8; PUBLICKEYBYTES],
@@ -158,14 +150,12 @@ pub mod avx2 {
 
     pub unsafe fn crypto_sign_signature(
         sig: &mut [u8; SIGNATUREBYTES],
-        siglen: &mut usize,
         message: &[u8],
         sk: &[u8; SECRETKEYBYTES],
     ) -> c_int {
         unsafe {
             PQCLEAN_DILITHIUM2_AVX2_crypto_sign_signature(
-                sig as *mut u8,
-                siglen as *mut usize,
+                sig as *mut _,
                 message.as_ptr(),
                 message.len(),
                 sk as *const _,
@@ -174,14 +164,13 @@ pub mod avx2 {
     }
 
     pub unsafe fn crypto_sign_verify(
-        sig: &[u8],
+        sig: &[u8; SIGNATUREBYTES],
         message: &[u8],
         pk: &[u8; PUBLICKEYBYTES],
     ) -> c_int {
         unsafe {
             PQCLEAN_DILITHIUM2_AVX2_crypto_sign_verify(
-                sig.as_ptr(),
-                sig.len(),
+                sig as *const _,
                 message.as_ptr(),
                 message.len(),
                 pk as *const _,
@@ -205,11 +194,10 @@ pub mod avx2 {
             assert_eq!(res, 0);
 
             let mut sig = [0u8; SIGNATUREBYTES];
-            let mut len: usize = 0;
-            let res = unsafe { crypto_sign_signature(&mut sig, &mut len, &msg[..], &seckey) };
+            let res = unsafe { crypto_sign_signature(&mut sig, &msg[..], &seckey) };
             assert_eq!(res, 0);
 
-            let res = unsafe { crypto_sign_verify(&sig[..len], &msg[..], &pubkey) };
+            let res = unsafe { crypto_sign_verify(&sig, &msg[..], &pubkey) };
             assert_eq!(res, 0, "Invalid signature crated!");
         }
     }
@@ -232,16 +220,14 @@ pub mod aarch64 {
         ) -> c_int;
 
         fn PQCLEAN_DILITHIUM2_AARCH64_crypto_sign_signature(
-            sig: *mut u8,
-            siglen: *mut size_t,
+            sig: *mut [u8; SIGNATUREBYTES],
             m: *const u8,
             mlen: size_t,
             sk: *const [u8; SECRETKEYBYTES],
         ) -> c_int;
 
         fn PQCLEAN_DILITHIUM2_AARCH64_crypto_sign_verify(
-            sig: *const u8,
-            siglen: size_t,
+            sig: *const [u8; SIGNATUREBYTES],
             m: *const u8,
             mlen: size_t,
             pk: *const [u8; PUBLICKEYBYTES],
@@ -264,14 +250,12 @@ pub mod aarch64 {
 
     pub unsafe fn crypto_sign_signature(
         sig: &mut [u8; SIGNATUREBYTES],
-        siglen: &mut usize,
         message: &[u8],
         sk: &[u8; SECRETKEYBYTES],
     ) -> c_int {
         unsafe {
             PQCLEAN_DILITHIUM2_AARCH64_crypto_sign_signature(
-                sig as *mut u8,
-                siglen as *mut usize,
+                sig as *mut _,
                 message.as_ptr(),
                 message.len(),
                 sk as *const _,
@@ -280,14 +264,13 @@ pub mod aarch64 {
     }
 
     pub unsafe fn crypto_sign_verify(
-        sig: &[u8],
+        sig: &[u8; SIGNATUREBYTES],
         message: &[u8],
         pk: &[u8; PUBLICKEYBYTES],
     ) -> c_int {
         unsafe {
             PQCLEAN_DILITHIUM2_AARCH64_crypto_sign_verify(
-                sig.as_ptr(),
-                sig.len(),
+                sig as *const _,
                 message.as_ptr(),
                 message.len(),
                 pk as *const _,
@@ -311,11 +294,10 @@ pub mod aarch64 {
             assert_eq!(res, 0);
 
             let mut sig = [0u8; SIGNATUREBYTES];
-            let mut len: usize = 0;
-            let res = unsafe { crypto_sign_signature(&mut sig, &mut len, &msg[..], &seckey) };
+            let res = unsafe { crypto_sign_signature(&mut sig, &msg[..], &seckey) };
             assert_eq!(res, 0);
 
-            let res = unsafe { crypto_sign_verify(&sig[..len], &msg[..], &pubkey) };
+            let res = unsafe { crypto_sign_verify(&sig, &msg[..], &pubkey) };
             assert_eq!(res, 0, "Invalid signature crated!");
         }
     }

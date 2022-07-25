@@ -16,13 +16,13 @@ int PQCLEAN_DILITHIUM3_CLEAN_crypto_sign_keypair(
 );
 
 int PQCLEAN_DILITHIUM3_CLEAN_crypto_sign_signature(
-    uint8_t* sig, size_t* siglen,
+    uint8_t* sig,
     const uint8_t* m, size_t mlen,
     const uint8_t sk[PQCLEAN_DILITHIUM3_CLEAN_CRYPTO_SECRETKEYBYTES]
 );
 
 int PQCLEAN_DILITHIUM3_CLEAN_crypto_sign_verify(
-    const uint8_t* sig, size_t siglen,
+    const uint8_t* sig,
     const uint8_t* m, size_t mlen,
     const uint8_t pk[PQCLEAN_DILITHIUM3_CLEAN_CRYPTO_PUBLICKEYBYTES]
 );
