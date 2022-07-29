@@ -112,13 +112,12 @@ macro_rules! impl_dilithium_module {
 
         mod detect_arch {
             use super::*;
-            use cty::c_int;
 
             pub unsafe fn crypto_sign_keypair(
                 pk: &mut [u8; PUBLICKEYBYTES],
                 sk: &mut [u8; SECRETKEYBYTES],
                 random: &mut [u8; 128],
-            ) -> c_int {
+            ) {
                 #[cfg(enable_avx2)]
                 {
                     if std::is_x86_feature_detected!("avx2") {
@@ -136,7 +135,7 @@ macro_rules! impl_dilithium_module {
                 sig: &mut [u8; SIGNATUREBYTES],
                 message: &[u8],
                 sk: &[u8; SECRETKEYBYTES],
-            ) -> c_int {
+            ) {
                 #[cfg(enable_avx2)]
                 {
                     if std::is_x86_feature_detected!("avx2") {
@@ -154,7 +153,7 @@ macro_rules! impl_dilithium_module {
                 sig: &[u8; SIGNATUREBYTES],
                 message: &[u8],
                 pk: &[u8; PUBLICKEYBYTES],
-            ) -> c_int {
+            ) -> crate::VerificationResult {
                 #[cfg(enable_avx2)]
                 {
                     if std::is_x86_feature_detected!("avx2") {
@@ -203,14 +202,7 @@ macro_rules! impl_dilithium_module {
         ) -> crate::VerificationResult {
             let message: &[u8] = m.as_ref();
 
-            let res =
-                unsafe { detect_arch::crypto_sign_verify(sig.0.as_ref(), message, pk.0.as_ref()) };
-
-            if res == 0 {
-                Ok(crate::VerificationOk)
-            } else {
-                Err(crate::VerificationFailure)
-            }
+            unsafe { detect_arch::crypto_sign_verify(sig.0.as_ref(), message, pk.0.as_ref()) }
         }
 
         #[cfg(test)]

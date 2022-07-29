@@ -38,21 +38,21 @@ pub mod clean {
         pk: &mut [u8; PUBLICKEYBYTES],
         sk: &mut [u8; SECRETKEYBYTES],
         random: &mut [u8; 128],
-    ) -> c_int {
+    ) {
         unsafe {
             PQCLEAN_DILITHIUM3_CLEAN_crypto_sign_keypair(
                 pk as *mut _,
                 sk as *mut _,
                 random as *mut _,
             )
-        }
+        };
     }
 
     pub unsafe fn crypto_sign_signature(
         sig: &mut [u8; SIGNATUREBYTES],
         message: &[u8],
         sk: &[u8; SECRETKEYBYTES],
-    ) -> c_int {
+    ) {
         unsafe {
             PQCLEAN_DILITHIUM3_CLEAN_crypto_sign_signature(
                 sig as *mut _,
@@ -60,21 +60,26 @@ pub mod clean {
                 message.len(),
                 sk as *const _,
             )
-        }
+        };
     }
 
     pub unsafe fn crypto_sign_verify(
         sig: &[u8; SIGNATUREBYTES],
         message: &[u8],
         pk: &[u8; PUBLICKEYBYTES],
-    ) -> c_int {
-        unsafe {
+    ) -> crate::VerificationResult {
+        let res = unsafe {
             PQCLEAN_DILITHIUM3_CLEAN_crypto_sign_verify(
                 sig as *const _,
                 message.as_ptr(),
                 message.len(),
                 pk as *const _,
             )
+        };
+        if res == 0 {
+            Ok(crate::VerificationOk)
+        } else {
+            Err(crate::VerificationFailure)
         }
     }
 
@@ -90,15 +95,13 @@ pub mod clean {
             let mut pubkey = [0u8; PUBLICKEYBYTES];
             // not secure random, but deterministic and good enough for the test
             let mut random = [37u8; 128];
-            let res = unsafe { crypto_sign_keypair(&mut pubkey, &mut seckey, &mut random) };
-            assert_eq!(res, 0);
+            unsafe { crypto_sign_keypair(&mut pubkey, &mut seckey, &mut random) };
 
             let mut sig = [0u8; SIGNATUREBYTES];
-            let res = unsafe { crypto_sign_signature(&mut sig, &msg[..], &seckey) };
-            assert_eq!(res, 0);
+            unsafe { crypto_sign_signature(&mut sig, &msg[..], &seckey) };
 
             let res = unsafe { crypto_sign_verify(&sig, &msg[..], &pubkey) };
-            assert_eq!(res, 0, "Invalid signature crated!");
+            assert!(res.is_ok(), "Invalid signature crated!");
         }
     }
 }
@@ -138,21 +141,21 @@ pub mod avx2 {
         pk: &mut [u8; PUBLICKEYBYTES],
         sk: &mut [u8; SECRETKEYBYTES],
         random: &mut [u8; 128],
-    ) -> c_int {
+    ) {
         unsafe {
             PQCLEAN_DILITHIUM3_AVX2_crypto_sign_keypair(
                 pk as *mut _,
                 sk as *mut _,
                 random as *mut _,
             )
-        }
+        };
     }
 
     pub unsafe fn crypto_sign_signature(
         sig: &mut [u8; SIGNATUREBYTES],
         message: &[u8],
         sk: &[u8; SECRETKEYBYTES],
-    ) -> c_int {
+    ) {
         unsafe {
             PQCLEAN_DILITHIUM3_AVX2_crypto_sign_signature(
                 sig as *mut _,
@@ -160,21 +163,26 @@ pub mod avx2 {
                 message.len(),
                 sk as *const _,
             )
-        }
+        };
     }
 
     pub unsafe fn crypto_sign_verify(
         sig: &[u8; SIGNATUREBYTES],
         message: &[u8],
         pk: &[u8; PUBLICKEYBYTES],
-    ) -> c_int {
-        unsafe {
+    ) -> crate::VerificationResult {
+        let res = unsafe {
             PQCLEAN_DILITHIUM3_AVX2_crypto_sign_verify(
                 sig as *const _,
                 message.as_ptr(),
                 message.len(),
                 pk as *const _,
             )
+        };
+        if res == 0 {
+            Ok(crate::VerificationOk)
+        } else {
+            Err(crate::VerificationFailure)
         }
     }
 
@@ -190,15 +198,13 @@ pub mod avx2 {
             let mut pubkey = [0u8; PUBLICKEYBYTES];
             // not secure random, but deterministic and good enough for the test
             let mut random = [37u8; 128];
-            let res = unsafe { crypto_sign_keypair(&mut pubkey, &mut seckey, &mut random) };
-            assert_eq!(res, 0);
+            unsafe { crypto_sign_keypair(&mut pubkey, &mut seckey, &mut random) };
 
             let mut sig = [0u8; SIGNATUREBYTES];
-            let res = unsafe { crypto_sign_signature(&mut sig, &msg[..], &seckey) };
-            assert_eq!(res, 0);
+            unsafe { crypto_sign_signature(&mut sig, &msg[..], &seckey) };
 
             let res = unsafe { crypto_sign_verify(&sig, &msg[..], &pubkey) };
-            assert_eq!(res, 0, "Invalid signature crated!");
+            assert!(res.is_ok(), "Invalid signature crated!");
         }
     }
 }
@@ -238,21 +244,21 @@ pub mod aarch64 {
         pk: &mut [u8; PUBLICKEYBYTES],
         sk: &mut [u8; SECRETKEYBYTES],
         random: &mut [u8; 128],
-    ) -> c_int {
+    ) {
         unsafe {
             PQCLEAN_DILITHIUM3_AARCH64_crypto_sign_keypair(
                 pk as *mut _,
                 sk as *mut _,
                 random as *mut _,
             )
-        }
+        };
     }
 
     pub unsafe fn crypto_sign_signature(
         sig: &mut [u8; SIGNATUREBYTES],
         message: &[u8],
         sk: &[u8; SECRETKEYBYTES],
-    ) -> c_int {
+    ) {
         unsafe {
             PQCLEAN_DILITHIUM3_AARCH64_crypto_sign_signature(
                 sig as *mut _,
@@ -260,21 +266,26 @@ pub mod aarch64 {
                 message.len(),
                 sk as *const _,
             )
-        }
+        };
     }
 
     pub unsafe fn crypto_sign_verify(
         sig: &[u8; SIGNATUREBYTES],
         message: &[u8],
         pk: &[u8; PUBLICKEYBYTES],
-    ) -> c_int {
-        unsafe {
+    ) -> crate::VerificationResult {
+        let res = unsafe {
             PQCLEAN_DILITHIUM3_AARCH64_crypto_sign_verify(
                 sig as *const _,
                 message.as_ptr(),
                 message.len(),
                 pk as *const _,
             )
+        };
+        if res == 0 {
+            Ok(crate::VerificationOk)
+        } else {
+            Err(crate::VerificationFailure)
         }
     }
 
@@ -290,15 +301,13 @@ pub mod aarch64 {
             let mut pubkey = [0u8; PUBLICKEYBYTES];
             // not secure random, but deterministic and good enough for the test
             let mut random = [37u8; 128];
-            let res = unsafe { crypto_sign_keypair(&mut pubkey, &mut seckey, &mut random) };
-            assert_eq!(res, 0);
+            unsafe { crypto_sign_keypair(&mut pubkey, &mut seckey, &mut random) };
 
             let mut sig = [0u8; SIGNATUREBYTES];
-            let res = unsafe { crypto_sign_signature(&mut sig, &msg[..], &seckey) };
-            assert_eq!(res, 0);
+            unsafe { crypto_sign_signature(&mut sig, &msg[..], &seckey) };
 
             let res = unsafe { crypto_sign_verify(&sig, &msg[..], &pubkey) };
-            assert_eq!(res, 0, "Invalid signature crated!");
+            assert!(res.is_ok(), "Invalid signature crated!");
         }
     }
 }
