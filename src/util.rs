@@ -114,3 +114,22 @@ pub mod serde {
         }
     }
 }
+
+/// Convert a reference to a slice to a reference to an array of length `N`.
+///
+/// # Panics
+/// Panics when the slice length differs from `N`.
+pub(crate) fn slice_as_array<T, const N: usize>(arr: &[T]) -> &[T; N] {
+    arr.try_into()
+        .expect("slice length differs from expected array length")
+}
+
+/// Convert a mutable reference to a slice to a mutable reference to an array of
+/// length `N`.
+///
+/// # Panics
+/// Panics when the slice length differs from `N`.
+pub(crate) fn slice_as_array_mut<T, const N: usize>(arr: &mut [T]) -> &mut [T; N] {
+    arr.try_into()
+        .expect("slice length differs from expected array length")
+}

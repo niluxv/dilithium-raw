@@ -69,6 +69,7 @@
 
 /// Low level C bindings.
 pub mod ffi;
+mod internals;
 /// Utilities, mostly for use in this crate.
 pub mod util;
 
@@ -105,7 +106,18 @@ pub mod dilithium3 {
 /// Module containing a mid-level API to dilithium 5.
 #[cfg(feature = "dilithium5")]
 pub mod dilithium5 {
-    use crate::ffi::dilithium5::*;
+    use crate::ffi::dilithium5::{PUBLICKEYBYTES, SECRETKEYBYTES, SIGNATUREBYTES};
+    mod clean {
+        pub(crate) use crate::internals::dilithium5::*;
+    }
+    #[cfg(all(enable_avx2))]
+    mod avx2 {
+        pub(crate) use crate::ffi::dilithium5::avx2::*;
+    }
+    #[cfg(all(enable_aarch64))]
+    mod avx2 {
+        pub(crate) use crate::ffi::dilithium5::aarch64::*;
+    }
     crate::macros::impl_dilithium_module!("regression_tests/dilithium5.ron");
 }
 

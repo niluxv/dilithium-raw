@@ -37,6 +37,7 @@ hazmat = []
 [dependencies]
 cty = "0.2"
 serde = { version = "1.0", optional = true, features = ["derive"] }
+sha3 = "0.10"
 
 [dev-dependencies]
 serde_test = "1.0"

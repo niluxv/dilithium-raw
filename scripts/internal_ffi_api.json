@@ -1,0 +1,334 @@
+{
+    "api" : [
+        {
+            "name": "polyvec_matrix_expand",
+            "args": [
+                ["mat", "*mut [PolyVecL; params::K]"],
+                ["rho", "*const [u8; SEEDBYTES]"]
+            ],
+            "wrapping" : {"uninit_mutate_init_return": ["mat"]}
+        },
+        {
+            "name": "polyvecl_uniform_eta",
+            "args": [
+                ["v", "*mut PolyVecL"],
+                ["seed", "*const [u8; CRHBYTES]"],
+                ["nonce", "u16"]
+            ],
+            "wrapping" : {"uninit_mutate_init_return": ["v"]}
+        },
+        {
+            "name": "polyveck_uniform_eta",
+            "args": [
+                ["v", "*mut PolyVecK"],
+                ["seed", "*const [u8; CRHBYTES]"],
+                ["nonce", "u16"]
+            ],
+            "wrapping" : {"uninit_mutate_init_return": ["v"]}
+        },
+        {
+            "name": "polyvecl_ntt",
+            "args": [
+                ["v", "*mut PolyVecL"]
+            ]
+        },
+        {
+            "name": "polyveck_reduce",
+            "args": [
+                ["v", "*mut PolyVecK"]
+            ]
+        },
+        {
+            "name": "polyvecl_reduce",
+            "args": [
+                ["v", "*mut PolyVecL"]
+            ]
+        },
+        {
+            "name": "polyveck_invntt_tomont",
+            "args": [
+                ["v", "*mut PolyVecK"]
+            ]
+        },
+        {
+            "name": "polyvecl_invntt_tomont",
+            "args": [
+                ["v", "*mut PolyVecL"]
+            ]
+        },
+        {
+            "name": "polyvec_matrix_pointwise_montgomery",
+            "args": [
+                ["t", "*mut PolyVecK"],
+                ["mat", "*const [PolyVecL; params::K]"],
+                ["v", "*const PolyVecL"]
+            ],
+            "wrapping" : {"uninit_mutate_init_return": ["t"]}
+        },
+        {
+            "name": "polyveck_caddq",
+            "args": [
+                ["t", "*mut PolyVecK"]
+            ]
+        },
+        {
+            "name": "pack_pk",
+            "args": [
+                ["pk", "*mut [u8; PUBLICKEYBYTES]"],
+                ["rho", "*const [u8; SEEDBYTES]"],
+                ["t1", "*const PolyVecK"]
+            ]
+        },
+        {
+            "name": "pack_sig",
+            "args": [
+                ["sig", "*mut [u8; SIGNATUREBYTES]"],
+                ["c", "*const [u8; SEEDBYTES]"],
+                ["z", "*const PolyVecL"],
+                ["h", "*const PolyVecK"]
+            ],
+            "wrapping": {
+                "arg_mapping_from": {"c": "sig"},
+                "map_types": "explicit"
+            }
+        },
+        {
+            "name": "pack_sk",
+            "args": [
+                ["sk", "*mut [u8; SECRETKEYBYTES]"],
+                ["rho", "*const [u8; SEEDBYTES]"],
+                ["tr", "*const [u8; SEEDBYTES]"],
+                ["key", "*const [u8; SEEDBYTES]"],
+                ["t0", "*const PolyVecK"],
+                ["s1", "*const PolyVecL"],
+                ["s2", "*const PolyVecK"]
+            ]
+        },
+        {
+            "name": "unpack_pk",
+            "args": [
+                ["rho", "*mut [u8; SEEDBYTES]"],
+                ["t1", "*mut PolyVecK"],
+                ["pk", "*const [u8; PUBLICKEYBYTES]"]
+            ],
+            "wrapping" : {"uninit_mutate_init_return": ["rho", "t1"]}
+        },
+        {
+            "name": "unpack_sig",
+            "args": [
+                ["c", "*mut [u8; SEEDBYTES]"],
+                ["z", "*mut PolyVecL"],
+                ["h", "*mut PolyVecK"],
+                ["sig", "*const [u8; SIGNATUREBYTES]"]
+            ],
+            "return": "c_int",
+            "wrapping" : {
+                "uninit_mutate_init_return": ["c", "z", "h"],
+                "return_as_result": "0 is Ok"
+            }
+        },
+        {
+            "name": "unpack_sk",
+            "args": [
+                ["rho", "*mut [u8; SEEDBYTES]"],
+                ["tr", "*mut [u8; SEEDBYTES]"],
+                ["key", "*mut [u8; SEEDBYTES]"],
+                ["t0", "*mut PolyVecK"],
+                ["s1", "*mut PolyVecL"],
+                ["s2", "*mut PolyVecK"],
+                ["sk", "*const [u8; SECRETKEYBYTES]"]
+            ],
+            "wrapping": {"uninit_mutate_init_return": ["rho", "tr", "key", "t0", "s1", "s2"]}
+        },
+        {
+            "name": "polyvecl_chknorm",
+            "args": [
+                ["v", "*const PolyVecL"],
+                ["bound", "i32"]
+            ],
+            "return": "c_int",
+            "wrapping" : {
+                "return_as_result": "0 is Ok"
+            }
+        },
+        {
+            "name": "polyveck_chknorm",
+            "args": [
+                ["v", "*const PolyVecK"],
+                ["bound", "i32"]
+            ],
+            "return": "c_int",
+            "wrapping" : {
+                "return_as_result": "0 is Ok"
+            }
+        },
+        {
+            "name": "poly_challenge",
+            "args": [
+                ["c", "*mut Poly"],
+                ["seed", "*const [u8; SEEDBYTES]"]
+            ],
+            "wrapping" : {
+                "uninit_mutate_init_return": ["c"]
+            }
+        },
+        {
+            "name": "poly_ntt",
+            "args": [
+                ["a", "*mut Poly"]
+            ]
+        },
+        {
+            "name": "polyveck_shiftl",
+            "args": [
+                ["v", "*mut PolyVecK"]
+            ]
+        },
+        {
+            "name": "polyveck_ntt",
+            "args": [
+                ["v", "*mut PolyVecK"]
+            ]
+        },
+        {
+            "name": "polyvecl_pointwise_poly_montgomery",
+            "args": [
+                ["r", "*mut PolyVecL"],
+                ["a", "*const Poly"],
+                ["v", "*const PolyVecL"]
+            ]
+        },
+        {
+            "name": "polyveck_add",
+            "args": [
+                ["w", "*mut PolyVecK"],
+                ["u", "*const PolyVecK"],
+                ["v", "*const PolyVecK"]
+            ],
+            "wrapping": {
+                "name_postfix": "_inplace",
+                "arg_mapping_from": {"u": "w"},
+                "description": "Add the vector of polynomials `v` into the vector of polynomials `w` in-place, modifying `w`."
+            }
+        },
+        {
+            "name": "polyvecl_add",
+            "args": [
+                ["w", "*mut PolyVecL"],
+                ["u", "*const PolyVecL"],
+                ["v", "*const PolyVecL"]
+            ],
+            "wrapping": {
+                "name_postfix": "_inplace",
+                "arg_mapping_from": {"u": "w"},
+                "description": "Add the vector of polynomials `v` into the vector of polynomials `w` in-place, modifying `w`."
+            }
+        },
+        {
+            "name": "polyveck_sub",
+            "args": [
+                ["w", "*mut PolyVecK"],
+                ["u", "*const PolyVecK"],
+                ["v", "*const PolyVecK"]
+            ],
+            "wrapping": {
+                "name_postfix": "_inplace",
+                "arg_mapping_from": {"u": "w"},
+                "description": "Subtract the vector of polynomials `v` from the vector of polynomials `w` in-place, modifying `w`."
+            }
+        },
+        {
+            "name": "polyveck_power2round",
+            "args": [
+                ["v1", "*mut PolyVecK"],
+                ["v0", "*mut PolyVecK"],
+                ["v", "*const PolyVecK"]
+            ],
+            "wrapping": {
+                "name_postfix": "_inplace",
+                "arg_mapping_from": {"v": "v1"},
+                "uninit_mutate_init_return": ["v0"],
+                "description": "Round the vector of polynomials `v1` to 2^D in-place, returning a vector of polynomials with the differences."
+            }
+        },
+        {
+            "name": "polyveck_use_hint",
+            "args": [
+                ["w", "*mut PolyVecK"],
+                ["u", "*const PolyVecK"],
+                ["h", "*const PolyVecK"]
+            ],
+            "wrapping": {
+                "name_postfix": "_inplace",
+                "arg_mapping_from": {"u": "w"},
+                "description": "Apply hint vector of polynomials `h` inplace to `w`."
+            }
+        },
+        {
+            "name": "polyvecl_uniform_gamma1",
+            "args": [
+                ["v", "*mut PolyVecL"],
+                ["seed", "*const [u8; CRHBYTES]"],
+                ["nonce", "u16"]
+            ],
+            "wrapping" : {"uninit_mutate_init_return": ["v"]}
+        },
+        {
+            "name": "polyveck_decompose",
+            "args": [
+                ["v1", "*mut PolyVecK"],
+                ["v0", "*mut PolyVecK"],
+                ["v", "*const PolyVecK"]
+            ],
+            "wrapping": {
+                "name_postfix": "_inplace",
+                "arg_mapping_from": {"v": "v1"},
+                "uninit_mutate_init_return": ["v0"],
+                "description": "Decompose the vector of polynomials `v1` to high bits (in-place) and low bits (returned)."
+            }
+        },
+        {
+            "name": "polyveck_make_hint",
+            "args": [
+                ["h", "*mut PolyVecK"],
+                ["v0", "*const PolyVecK"],
+                ["v1", "*const PolyVecK"]
+            ],
+            "return": "cty::c_uint"
+        },
+        {
+            "name": "polyveck_pack_w1",
+            "args": [
+                ["r", "*mut [u8; params::K * params::POLYW1_PACKEDBYTES]"],
+                ["w1", "*const PolyVecK"]
+            ],
+            "wrappings" : [
+                {},
+                {
+                    "name_postfix": "_new",
+                    "uninit_mutate_init_return": ["r"]
+                }
+            ]
+        },
+        {
+            "name": "polyveck_pointwise_poly_montgomery",
+            "args": [
+                ["r", "*mut PolyVecK"],
+                ["a", "*const Poly"],
+                ["v", "*const PolyVecK"]
+            ],
+            "wrappings": [
+                {},
+                {
+                    "name_postfix": "_new",
+                    "uninit_mutate_init_return": ["r"]
+                },
+                {
+                    "name_postfix": "_inplace",
+                    "arg_mapping_from": {"v": "r"},
+                    "description": "`polyveck_pointwise_poly_montgomery` with `r == v`."
+                }
+            ]
+        }
+    ]
+}
