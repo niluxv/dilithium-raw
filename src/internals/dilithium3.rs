@@ -1,8 +1,8 @@
-//! Dilithium 5 clean and aarch64 FFI and Rust porting.
+//! Dilithium 3 clean and aarch64 FFI and Rust porting.
 
-pub const PUBLICKEYBYTES: usize = 2592;
-pub const SECRETKEYBYTES: usize = 4864;
-pub const SIGNATUREBYTES: usize = 4595;
+pub const PUBLICKEYBYTES: usize = 1952;
+pub const SECRETKEYBYTES: usize = 4000;
+pub const SIGNATUREBYTES: usize = 3293;
 
 const SEEDBYTES: usize = 32;
 const CRHBYTES: usize = 64;

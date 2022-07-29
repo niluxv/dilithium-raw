@@ -121,7 +121,7 @@
                 ["h", "*mut PolyVecK"],
                 ["sig", "*const [u8; SIGNATUREBYTES]"]
             ],
-            "return": "c_int",
+            "return": "cty::c_int",
             "wrapping" : {
                 "uninit_mutate_init_return": ["c", "z", "h"],
                 "return_as_result": "0 is Ok"
@@ -146,7 +146,7 @@
                 ["v", "*const PolyVecL"],
                 ["bound", "i32"]
             ],
-            "return": "c_int",
+            "return": "cty::c_int",
             "wrapping" : {
                 "return_as_result": "0 is Ok"
             }
@@ -157,7 +157,7 @@
                 ["v", "*const PolyVecK"],
                 ["bound", "i32"]
             ],
-            "return": "c_int",
+            "return": "cty::c_int",
             "wrapping" : {
                 "return_as_result": "0 is Ok"
             }

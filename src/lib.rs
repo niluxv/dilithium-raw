@@ -92,32 +92,33 @@ mod macros;
 /// Module containing a mid-level API to dilithium 2.
 #[cfg(feature = "dilithium2")]
 pub mod dilithium2 {
-    use crate::ffi::dilithium2::*;
+    use crate::internals::dilithium2::*;
+
+    #[cfg(enable_avx2)]
+    pub(crate) use crate::ffi::dilithium2::avx2;
+
     crate::macros::impl_dilithium_module!("regression_tests/dilithium2.ron");
 }
 
 /// Module containing a mid-level API to dilithium 3.
 #[cfg(feature = "dilithium3")]
 pub mod dilithium3 {
-    use crate::ffi::dilithium3::*;
+    use crate::internals::dilithium3::*;
+
+    #[cfg(enable_avx2)]
+    pub(crate) use crate::ffi::dilithium3::avx2;
+
     crate::macros::impl_dilithium_module!("regression_tests/dilithium3.ron");
 }
 
 /// Module containing a mid-level API to dilithium 5.
 #[cfg(feature = "dilithium5")]
 pub mod dilithium5 {
-    use crate::ffi::dilithium5::{PUBLICKEYBYTES, SECRETKEYBYTES, SIGNATUREBYTES};
-    mod clean {
-        pub(crate) use crate::internals::dilithium5::*;
-    }
-    #[cfg(all(enable_avx2))]
-    mod avx2 {
-        pub(crate) use crate::ffi::dilithium5::avx2::*;
-    }
-    #[cfg(all(enable_aarch64))]
-    mod avx2 {
-        pub(crate) use crate::ffi::dilithium5::aarch64::*;
-    }
+    use crate::internals::dilithium5::*;
+
+    #[cfg(enable_avx2)]
+    pub(crate) use crate::ffi::dilithium5::avx2;
+
     crate::macros::impl_dilithium_module!("regression_tests/dilithium5.ron");
 }
 
