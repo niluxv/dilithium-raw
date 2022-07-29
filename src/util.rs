@@ -1,6 +1,8 @@
-// Wrapper around a fixed length array of bytes which implements
-// [`serde::Serialize`] and [`serde::Deserialize`] as the *byte array* type in
-// the `serde` data model.
+//! Utilities, mostly for use in this crate.
+
+/// Wrapper around a fixed length array of bytes which implements
+/// [`serde::Serialize`] and [`serde::Deserialize`] as the *byte array* type in
+/// the `serde` data model.
 #[derive(Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Clone, Copy)]
 pub struct ByteArray<const N: usize>(pub [u8; N]);
 

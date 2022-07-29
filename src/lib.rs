@@ -67,10 +67,10 @@
 #![deny(future_incompatible, rust_2018_idioms)]
 #![warn(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
 
-/// Low level C bindings.
-pub mod ffi;
+#[cfg(enable_avx2)]
+mod avx2_ffi;
 mod internals;
-/// Utilities, mostly for use in this crate.
+
 pub mod util;
 
 /// Message did verify correctly.
@@ -95,7 +95,7 @@ pub mod dilithium2 {
     use crate::internals::dilithium2::*;
 
     #[cfg(enable_avx2)]
-    pub(crate) use crate::ffi::dilithium2::avx2;
+    pub(crate) use crate::avx2_ffi::dilithium2 as avx2;
 
     crate::macros::impl_dilithium_module!("regression_tests/dilithium2.ron");
 }
@@ -106,7 +106,7 @@ pub mod dilithium3 {
     use crate::internals::dilithium3::*;
 
     #[cfg(enable_avx2)]
-    pub(crate) use crate::ffi::dilithium3::avx2;
+    pub(crate) use crate::avx2_ffi::dilithium3 as avx2;
 
     crate::macros::impl_dilithium_module!("regression_tests/dilithium3.ron");
 }
@@ -117,7 +117,7 @@ pub mod dilithium5 {
     use crate::internals::dilithium5::*;
 
     #[cfg(enable_avx2)]
-    pub(crate) use crate::ffi::dilithium5::avx2;
+    pub(crate) use crate::avx2_ffi::dilithium5 as avx2;
 
     crate::macros::impl_dilithium_module!("regression_tests/dilithium5.ron");
 }

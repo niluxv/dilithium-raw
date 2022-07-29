@@ -9,11 +9,10 @@ def main():
         publickey_bytes = param_set["publickey_bytes"]
         secretkey_bytes = param_set["secretkey_bytes"]
         signature_bytes = param_set["signature_bytes"]
-        for impl in param_set["implementations"]:
-            assert impl in ["clean", "avx2", "aarch64"]
-            IMPL = impl.upper()
+        impl = "avx2"
+        IMPL = impl.upper()
 
-            template = f"""\
+        template = f"""\
 #ifndef PQCLEAN_DILITHIUM{level}_{IMPL}_API_H
 #define PQCLEAN_DILITHIUM{level}_{IMPL}_API_H
 
@@ -46,8 +45,8 @@ int PQCLEAN_DILITHIUM{level}_{IMPL}_crypto_sign_verify(
 #endif
 """
 
-            with open(f"extern/dilithium{level}/{impl}/api.h", 'w') as h_file:
-                h_file.write(template)
+        with open(f"extern/dilithium{level}/{impl}/api.h", 'w') as h_file:
+            h_file.write(template)
 
 if __name__ == "__main__":
     main()

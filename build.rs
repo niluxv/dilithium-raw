@@ -57,7 +57,6 @@ fn main() {
     let feat_dilithium5 = env::var("CARGO_FEATURE_DILITHIUM5").is_ok();
     let feat_avx2 = env::var("CARGO_FEATURE_AVX2").is_ok();
     let feat_aarch64 = env::var("CARGO_FEATURE_AARCH64").is_ok();
-    let feat_dynamic_cpu = env::var("CARGO_FEATURE_DYNAMIC_CPU_FEATURES").is_ok();
 
     let target_arch = env::var("CARGO_CFG_TARGET_ARCH").unwrap();
     let target_env = env::var("CARGO_CFG_TARGET_ENV").unwrap();
@@ -76,10 +75,7 @@ fn main() {
     let msvc = target_env == "msvc";
     // asm .S files use system V ABI calling convention and don't support MSVC, so
     // we disable avx2 completely on msvc targets
-    let enable_avx2 = target_arch == "x86_64"
-        && feat_avx2
-        && (feat_dynamic_cpu || target_features.contains("avx2"))
-        && !msvc;
+    let enable_avx2 = target_arch == "x86_64" && feat_avx2 && !msvc;
     // neon is supported on all aarch64 CPUs so no need for dynamic cpu feature
     // detection
     let enable_aarch64 = target_arch == "aarch64" && feat_aarch64 && !msvc;
