@@ -7,6 +7,6 @@ mod ffi;
 mod sign {
     use super::*;
 
-    super::super::super::sign::sign_api!();
+    super::super::super::sign::sign_api!(super::super::Dilithium3Clean);
 }
 pub use sign::{crypto_sign_keypair, crypto_sign_signature, crypto_sign_verify};

@@ -1,5 +1,7 @@
 //! Utilities, mostly for use in this crate.
 
+use core::mem::MaybeUninit;
+
 /// Wrapper around a fixed length array of bytes which implements
 /// [`serde::Serialize`] and [`serde::Deserialize`] as the *byte array* type in
 /// the `serde` data model.
@@ -134,4 +136,51 @@ pub(crate) fn slice_as_array<T, const N: usize>(arr: &[T]) -> &[T; N] {
 pub(crate) fn slice_as_array_mut<T, const N: usize>(arr: &mut [T]) -> &mut [T; N] {
     arr.try_into()
         .expect("slice length differs from expected array length")
+}
+
+pub(crate) struct UninitArray<T, const N: usize> {
+    array: [MaybeUninit<T>; N],
+    count: usize,
+}
+
+impl<T, const N: usize> UninitArray<T, N> {
+    /// Create a new uninitialized array of `T`s of length `N`.
+    ///
+    /// # Panics
+    /// Panics if `N == 0`.
+    #[inline]
+    pub(crate) fn new() -> Self {
+        assert!(N != 0);
+        // SAFETY: An uninitialized `[MaybeUninit<_>; LEN]` is valid.
+        let array = unsafe { MaybeUninit::<[MaybeUninit<T>; N]>::uninit().assume_init() };
+        Self { array, count: 0 }
+    }
+
+    /// Initialize one entry in the array and return `false` when the array is
+    /// now fully initialized, `true` otherwise.
+    ///
+    /// # Panics
+    /// Panics if the array is already full. This can happen when a previous
+    /// `push` returned false but this was ignored.
+    #[inline]
+    pub(crate) fn push(&mut self, val: T) -> bool {
+        self.array[self.count].write(val);
+        self.count += 1;
+        self.count < N
+    }
+
+    /// Assume that the array is fully initialized. Safe to use, but panics when
+    /// the array was not fully intialized.
+    ///
+    /// # Panics
+    /// Panics if the array was not fully initialized.
+    pub(crate) fn assume_init(self) -> [T; N] {
+        // assert that the array was fully initialized
+        assert!(self.count == N);
+        // SAFETY:
+        // * The assert above guarantees that all elements of the array are initialized
+        // * `MaybeUninit<T>` and T are guaranteed to have the same layout
+        // * `MaybeUninit` does not drop, so there are no double-frees
+        unsafe { (&self.array as *const _ as *const [T; N]).read() }
+    }
 }

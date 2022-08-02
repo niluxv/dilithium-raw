@@ -3,7 +3,7 @@
 //! `aarch64` implementations.
 
 macro_rules! sign_api {
-    () => {
+    ($dilithium:ty) => {
         use crate::util::{slice_as_array, slice_as_array_mut};
         use crate::{VerificationFailure, VerificationOk, VerificationResult};
         use sha3::digest::{ExtendableOutput, ExtendableOutputReset, Update};
@@ -32,14 +32,14 @@ macro_rules! sign_api {
             let mut s1hat = s1.clone();
             ffi::polyvecl_ntt(&mut s1hat);
             let mut t1 = ffi::polyvec_matrix_pointwise_montgomery(&mat, &s1hat);
-            ffi::polyveck_reduce(&mut t1);
+            <$dilithium>::polyveck_reduce(&mut t1);
             ffi::polyveck_invntt_tomont(&mut t1);
 
             /* Add error vector s2 */
-            ffi::polyveck_add_inplace(&mut t1, &s2);
+            <$dilithium>::polyveck_add_inplace(&mut t1, &s2);
 
             /* Extract t1 and write public key */
-            ffi::polyveck_caddq(&mut t1);
+            <$dilithium>::polyveck_caddq(&mut t1);
             let t0 = ffi::polyveck_power2round_inplace(&mut t1);
             ffi::pack_pk(pk, rho, &t1);
 
@@ -86,11 +86,11 @@ macro_rules! sign_api {
                 let mut z = y.clone();
                 ffi::polyvecl_ntt(&mut z);
                 let mut w1 = ffi::polyvec_matrix_pointwise_montgomery(&mat, &z);
-                ffi::polyveck_reduce(&mut w1);
+                <$dilithium>::polyveck_reduce(&mut w1);
                 ffi::polyveck_invntt_tomont(&mut w1);
 
                 /* Decompose w and call the random oracle */
-                ffi::polyveck_caddq(&mut w1);
+                <$dilithium>::polyveck_caddq(&mut w1);
                 let mut w0 = ffi::polyveck_decompose_inplace(&mut w1);
                 let sig_slice =
                     slice_as_array_mut::<u8, { params::K * params::POLYW1_PACKEDBYTES }>(
@@ -109,8 +109,8 @@ macro_rules! sign_api {
                 /* Compute z, reject if it reveals secret */
                 ffi::polyvecl_pointwise_poly_montgomery(&mut z, &cp, &s1);
                 ffi::polyvecl_invntt_tomont(&mut z);
-                ffi::polyvecl_add_inplace(&mut z, &y);
-                ffi::polyvecl_reduce(&mut z);
+                <$dilithium>::polyvecl_add_inplace(&mut z, &y);
+                <$dilithium>::polyvecl_reduce(&mut z);
                 if ffi::polyvecl_chknorm(&z, (params::GAMMA1 - params::BETA) as i32).is_err() {
                     continue;
                 }
@@ -119,8 +119,8 @@ macro_rules! sign_api {
                 * do not reveal secret information */
                 let mut h = ffi::polyveck_pointwise_poly_montgomery_new(&cp, &s2);
                 ffi::polyveck_invntt_tomont(&mut h);
-                ffi::polyveck_sub_inplace(&mut w0, &h);
-                ffi::polyveck_reduce(&mut w0);
+                <$dilithium>::polyveck_sub_inplace(&mut w0, &h);
+                <$dilithium>::polyveck_reduce(&mut w0);
                 if ffi::polyveck_chknorm(&w0, (params::GAMMA2 - params::BETA) as i32).is_err() {
                     continue;
                 }
@@ -128,12 +128,12 @@ macro_rules! sign_api {
                 /* Compute hints for w1 */
                 ffi::polyveck_pointwise_poly_montgomery(&mut h, &cp, &t0);
                 ffi::polyveck_invntt_tomont(&mut h);
-                ffi::polyveck_reduce(&mut h);
+                <$dilithium>::polyveck_reduce(&mut h);
                 if ffi::polyveck_chknorm(&h, params::GAMMA2 as i32).is_err() {
                     continue;
                 }
 
-                ffi::polyveck_add_inplace(&mut w0, &h);
+                <$dilithium>::polyveck_add_inplace(&mut w0, &h);
                 let n = ffi::polyveck_make_hint(&mut h, &w0, &w1);
                 if n > params::OMEGA as cty::c_uint {
                     continue;
@@ -179,12 +179,12 @@ macro_rules! sign_api {
             ffi::polyveck_ntt(&mut t1);
             ffi::polyveck_pointwise_poly_montgomery_inplace(&mut t1, &cp);
 
-            ffi::polyveck_sub_inplace(&mut w1, &t1);
-            ffi::polyveck_reduce(&mut w1);
+            <$dilithium>::polyveck_sub_inplace(&mut w1, &t1);
+            <$dilithium>::polyveck_reduce(&mut w1);
             ffi::polyveck_invntt_tomont(&mut w1);
 
             /* Reconstruct w1 */
-            ffi::polyveck_caddq(&mut w1);
+            <$dilithium>::polyveck_caddq(&mut w1);
             ffi::polyveck_use_hint_inplace(&mut w1, &h);
             let buf = ffi::polyveck_pack_w1_new(&w1);
 

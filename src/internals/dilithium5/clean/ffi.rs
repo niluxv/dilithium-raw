@@ -22,8 +22,6 @@ extern "C" {
         nonce: u16,
     );
     fn PQCLEAN_DILITHIUM5_CLEAN_polyvecl_ntt(v: *mut PolyVecL);
-    fn PQCLEAN_DILITHIUM5_CLEAN_polyveck_reduce(v: *mut PolyVecK);
-    fn PQCLEAN_DILITHIUM5_CLEAN_polyvecl_reduce(v: *mut PolyVecL);
     fn PQCLEAN_DILITHIUM5_CLEAN_polyveck_invntt_tomont(v: *mut PolyVecK);
     fn PQCLEAN_DILITHIUM5_CLEAN_polyvecl_invntt_tomont(v: *mut PolyVecL);
     fn PQCLEAN_DILITHIUM5_CLEAN_polyvec_matrix_pointwise_montgomery(
@@ -31,7 +29,6 @@ extern "C" {
         mat: *const [PolyVecL; params::K],
         v: *const PolyVecL,
     );
-    fn PQCLEAN_DILITHIUM5_CLEAN_polyveck_caddq(t: *mut PolyVecK);
     fn PQCLEAN_DILITHIUM5_CLEAN_pack_pk(
         pk: *mut [u8; PUBLICKEYBYTES],
         rho: *const [u8; SEEDBYTES],
@@ -82,21 +79,6 @@ extern "C" {
         r: *mut PolyVecL,
         a: *const Poly,
         v: *const PolyVecL,
-    );
-    fn PQCLEAN_DILITHIUM5_CLEAN_polyveck_add(
-        w: *mut PolyVecK,
-        u: *const PolyVecK,
-        v: *const PolyVecK,
-    );
-    fn PQCLEAN_DILITHIUM5_CLEAN_polyvecl_add(
-        w: *mut PolyVecL,
-        u: *const PolyVecL,
-        v: *const PolyVecL,
-    );
-    fn PQCLEAN_DILITHIUM5_CLEAN_polyveck_sub(
-        w: *mut PolyVecK,
-        u: *const PolyVecK,
-        v: *const PolyVecK,
     );
     fn PQCLEAN_DILITHIUM5_CLEAN_polyveck_power2round(
         v1: *mut PolyVecK,
@@ -156,12 +138,6 @@ pub fn polyveck_uniform_eta(seed: &[u8; CRHBYTES], nonce: u16) -> PolyVecK {
 pub fn polyvecl_ntt(v: &mut PolyVecL) {
     unsafe { PQCLEAN_DILITHIUM5_CLEAN_polyvecl_ntt(v as *mut _) };
 }
-pub fn polyveck_reduce(v: &mut PolyVecK) {
-    unsafe { PQCLEAN_DILITHIUM5_CLEAN_polyveck_reduce(v as *mut _) };
-}
-pub fn polyvecl_reduce(v: &mut PolyVecL) {
-    unsafe { PQCLEAN_DILITHIUM5_CLEAN_polyvecl_reduce(v as *mut _) };
-}
 pub fn polyveck_invntt_tomont(v: &mut PolyVecK) {
     unsafe { PQCLEAN_DILITHIUM5_CLEAN_polyveck_invntt_tomont(v as *mut _) };
 }
@@ -178,9 +154,6 @@ pub fn polyvec_matrix_pointwise_montgomery(mat: &[PolyVecL; params::K], v: &Poly
         )
     };
     unsafe { t.assume_init() }
-}
-pub fn polyveck_caddq(t: &mut PolyVecK) {
-    unsafe { PQCLEAN_DILITHIUM5_CLEAN_polyveck_caddq(t as *mut _) };
 }
 pub fn pack_pk(pk: &mut [u8; PUBLICKEYBYTES], rho: &[u8; SEEDBYTES], t1: &PolyVecK) {
     unsafe { PQCLEAN_DILITHIUM5_CLEAN_pack_pk(pk as *mut _, rho as *const _, t1 as *const _) };
@@ -317,21 +290,6 @@ pub fn polyvecl_pointwise_poly_montgomery(r: &mut PolyVecL, a: &Poly, v: &PolyVe
             v as *const _,
         )
     };
-}
-/// Add the vector of polynomials `v` into the vector of polynomials `w`
-/// in-place, modifying `w`.
-pub fn polyveck_add_inplace(w: &mut PolyVecK, v: &PolyVecK) {
-    unsafe { PQCLEAN_DILITHIUM5_CLEAN_polyveck_add(w as *mut _, w as *const _, v as *const _) };
-}
-/// Add the vector of polynomials `v` into the vector of polynomials `w`
-/// in-place, modifying `w`.
-pub fn polyvecl_add_inplace(w: &mut PolyVecL, v: &PolyVecL) {
-    unsafe { PQCLEAN_DILITHIUM5_CLEAN_polyvecl_add(w as *mut _, w as *const _, v as *const _) };
-}
-/// Subtract the vector of polynomials `v` from the vector of polynomials `w`
-/// in-place, modifying `w`.
-pub fn polyveck_sub_inplace(w: &mut PolyVecK, v: &PolyVecK) {
-    unsafe { PQCLEAN_DILITHIUM5_CLEAN_polyveck_sub(w as *mut _, w as *const _, v as *const _) };
 }
 /// Round the vector of polynomials `v1` to 2^D in-place, returning a vector of
 /// polynomials with the differences.

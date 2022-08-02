@@ -33,18 +33,6 @@
             ]
         },
         {
-            "name": "polyveck_reduce",
-            "args": [
-                ["v", "*mut PolyVecK"]
-            ]
-        },
-        {
-            "name": "polyvecl_reduce",
-            "args": [
-                ["v", "*mut PolyVecL"]
-            ]
-        },
-        {
             "name": "polyveck_invntt_tomont",
             "args": [
                 ["v", "*mut PolyVecK"]
@@ -64,12 +52,6 @@
                 ["v", "*const PolyVecL"]
             ],
             "wrapping" : {"uninit_mutate_init_return": ["t"]}
-        },
-        {
-            "name": "polyveck_caddq",
-            "args": [
-                ["t", "*mut PolyVecK"]
-            ]
         },
         {
             "name": "pack_pk",
@@ -197,45 +179,6 @@
                 ["a", "*const Poly"],
                 ["v", "*const PolyVecL"]
             ]
-        },
-        {
-            "name": "polyveck_add",
-            "args": [
-                ["w", "*mut PolyVecK"],
-                ["u", "*const PolyVecK"],
-                ["v", "*const PolyVecK"]
-            ],
-            "wrapping": {
-                "name_postfix": "_inplace",
-                "arg_mapping_from": {"u": "w"},
-                "description": "Add the vector of polynomials `v` into the vector of polynomials `w` in-place, modifying `w`."
-            }
-        },
-        {
-            "name": "polyvecl_add",
-            "args": [
-                ["w", "*mut PolyVecL"],
-                ["u", "*const PolyVecL"],
-                ["v", "*const PolyVecL"]
-            ],
-            "wrapping": {
-                "name_postfix": "_inplace",
-                "arg_mapping_from": {"u": "w"},
-                "description": "Add the vector of polynomials `v` into the vector of polynomials `w` in-place, modifying `w`."
-            }
-        },
-        {
-            "name": "polyveck_sub",
-            "args": [
-                ["w", "*mut PolyVecK"],
-                ["u", "*const PolyVecK"],
-                ["v", "*const PolyVecK"]
-            ],
-            "wrapping": {
-                "name_postfix": "_inplace",
-                "arg_mapping_from": {"u": "w"},
-                "description": "Subtract the vector of polynomials `v` from the vector of polynomials `w` in-place, modifying `w`."
-            }
         },
         {
             "name": "polyveck_power2round",
