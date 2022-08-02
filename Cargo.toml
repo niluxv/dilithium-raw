@@ -40,6 +40,7 @@ serde = { version = "1.0", optional = true, features = ["derive"] }
 sha3 = "0.10"
 
 [dev-dependencies]
+criterion = "0.3"
 serde_test = "1.0"
 rand = "0.8"
 ron = "0.7"
@@ -48,3 +49,7 @@ zeroize = "1.5"
 [build-dependencies]
 cc = "1.0"
 glob = "0.3"
+
+[[bench]]
+name = "bench_dilithium5_clean"
+harness = false
